@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm run format:check:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm outdated)",
+      "Bash(npm run build:*)",
+      "Bash(npm run format:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
