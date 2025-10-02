@@ -1,4 +1,4 @@
-# 🖼️ WebP Converter
+# 🖼️ WebP Image Converter
 
 > A modern, fast, and secure image converter that transforms your images into the WebP format directly in your browser.
 
@@ -8,7 +8,7 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-![WebP Converter Screenshot](https://via.placeholder.com/800x400/4f46e5/ffffff?text=WebP+Converter+Demo)
+![WebP Image Converter Screenshot](./public/screenshots/app-demo.webp)
 
 ## ✨ Features
 
@@ -25,13 +25,13 @@
 
 ## 🎯 Supported Formats
 
-| Input Formats | Output Format |
-|---------------|---------------|
-| JPEG, JPG     | WebP          |
+| Input Formats | Output Format            |
+| ------------- | ------------------------ |
+| JPEG, JPG     | WebP                     |
 | PNG           | WebP (with transparency) |
-| GIF           | WebP          |
-| BMP           | WebP          |
-| TIFF          | WebP          |
+| GIF           | WebP                     |
+| BMP           | WebP                     |
+| TIFF          | WebP                     |
 
 ## 🚀 Quick Start
 
@@ -63,16 +63,17 @@
    http://localhost:3000
    ```
 
+
 ## 📦 Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run type-check` | Run TypeScript type checking |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check code formatting |
+| Command                | Description                  |
+| ---------------------- | ---------------------------- |
+| `npm run dev`          | Start development server     |
+| `npm run build`        | Build for production         |
+| `npm run preview`      | Preview production build     |
+| `npm run type-check`   | Run TypeScript type checking |
+| `npm run format`       | Format code with Prettier    |
+| `npm run format:check` | Check code formatting        |
 
 ## 🏗️ Building for Production
 
