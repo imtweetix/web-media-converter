@@ -11,6 +11,7 @@ import {
   ConversionSettings,
   FilesList,
   InfoCard,
+  Footer,
 } from './components/features';
 
 function App() {
@@ -87,6 +88,8 @@ function App() {
         )}
 
         <InfoCard />
+
+        <Footer />
       </div>
     </div>
   );

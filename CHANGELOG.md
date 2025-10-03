@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2025-10-03
+
+### Added
+- 📄 **Footer Component**: Added copyright notice and attribution footer
+  - Dynamic year display (automatically updates to current year)
+  - Link to creator's GitHub profile
+  - Professional styling with rounded corners and shadow
+  - Consistent design with app's visual identity
+
+### Enhanced
+- 🎨 **App Layout**: Improved visual hierarchy with proper footer placement
+- 📝 **Copyright Protection**: Clear ownership attribution throughout the application
+
 ## [1.2.0] - 2025-10-03
 
 ### Added

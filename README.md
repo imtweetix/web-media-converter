@@ -1,14 +1,20 @@
 # 🖼️ WebP Image Converter
 
-> A modern, fast, and secure image converter that transforms your images into the WebP format directly in your browser.
+> A modern, fast, and secure SaaS image converter that transforms your images into the WebP format directly in your browser.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 ![WebP Image Converter Screenshot](./public/screenshots/app-demo.webp)
+
+## 🌐 Try It Now
+
+**Use the live application:** [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/)
+
+> **Note:** This is a proprietary SaaS application. The source code is available for viewing and contributing only. Please use the official web application above for all conversions.
 
 ## ✨ Features
 
@@ -35,35 +41,19 @@
 | BMP           | WebP                     |
 | TIFF          | WebP                     |
 
-## 🚀 Quick Start
+## 🚀 Using the Application
 
-### Prerequisites
+### For Users
+Simply visit [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/) to start converting your images to WebP format instantly.
 
-- [Node.js](https://nodejs.org/) 18 or higher
-- npm, yarn, or pnpm
+### For Contributors
+This repository is open for contributions. You can:
+- Report bugs and issues
+- Suggest new features
+- Submit pull requests for improvements
+- Provide feedback and ideas
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/webp-image-converter.git
-   cd webp-image-converter
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   ```
-   http://localhost:3000
-   ```
+**Note:** This source code is for contribution purposes only. Please do not attempt to deploy or host this application yourself.
 
 ## 🖼️ Image Resizing
 
@@ -87,7 +77,7 @@ The converter includes intelligent image resizing to help reduce file sizes whil
 4. **Apply to All** → Reset all images to use current global settings
 
 
-## 📦 Available Scripts
+## 📦 Development Commands (Contributors Only)
 
 | Command                | Description                  |
 | ---------------------- | ---------------------------- |
@@ -99,40 +89,7 @@ The converter includes intelligent image resizing to help reduce file sizes whil
 | `npm run format`       | Format code with Prettier    |
 | `npm run format:check` | Check code formatting        |
 
-## 🏗️ Building for Production
-
-```bash
-# Build the project
-npm run build
-
-# Preview the build locally
-npm run preview
-```
-
-The build outputs to the `dist/` directory and is ready for deployment to any static hosting service.
-
-## 🚀 Deployment
-
-### Netlify (Recommended)
-
-This project is optimized for Netlify deployment with pre-configured headers and redirects.
-
-1. **Deploy to Netlify**
-   - Connect your GitHub repository to Netlify
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-
-2. **Environment Variables** (Optional)
-   ```env
-   NODE_VERSION=20
-   ```
-
-### Other Platforms
-
-- **Vercel**: Works out of the box
-- **GitHub Pages**: Compatible with static deployment
-- **Cloudflare Pages**: Full support
-- **Any static host**: Upload `dist/` folder contents
+> **Important:** These commands are for development and contribution purposes only. Do not use them to deploy or host this application.
 
 ## 🛡️ Security Features
 
@@ -209,8 +166,19 @@ webp-image-converter/
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
+We welcome contributions to improve this SaaS application! You can help by:
 
+### 🐛 Reporting Issues
+- [Open an issue](https://github.com/yourusername/webp-image-converter/issues/new) for bugs
+- Provide detailed steps to reproduce
+- Include screenshots if applicable
+
+### 💡 Suggesting Features
+- [Request a feature](https://github.com/yourusername/webp-image-converter/issues/new) with a clear use case
+- Explain the problem it solves
+- Describe your proposed solution
+
+### 🔧 Code Contributions
 1. **Fork the repository**
 2. **Create a feature branch**
    ```bash
@@ -232,9 +200,26 @@ Contributions are welcome! Please follow these steps:
    ```
 7. **Open a Pull Request**
 
+### 📋 Contribution Guidelines
+- Follow the existing code style
+- Write clear commit messages
+- Test your changes thoroughly
+- Update documentation if needed
+- All contributions become part of the proprietary codebase
+
+> **Note:** By contributing, you agree that your contributions will be subject to the same proprietary license as the rest of the project.
+
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under a **Proprietary License** - see the [LICENSE](LICENSE) file for details.
+
+**Key Points:**
+- ✅ View source code for educational purposes
+- ✅ Contribute improvements and suggestions
+- ✅ Use the official web app at [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/)
+- ❌ Deploy, host, or distribute this software
+- ❌ Use for commercial purposes without permission
+- ❌ Create derivative works
 
 ## 🐛 Bug Reports & Feature Requests
 
@@ -242,6 +227,8 @@ Found a bug or have a feature idea? Please [open an issue](https://github.com/yo
 
 - **Bug Reports**: Steps to reproduce, expected behavior, screenshots
 - **Feature Requests**: Use case, proposed solution, mockups (if applicable)
+
+**For Support:** Use the [GitHub Issues](https://github.com/yourusername/webp-image-converter/issues) for all bug reports, feature requests, and general inquiries.
 
 ## 📊 Performance
 
@@ -275,7 +262,7 @@ Found a bug or have a feature idea? Please [open an issue](https://github.com/yo
 ---
 
 <p align="center">
-  Made with ❤️ by [Your Name]
+  Made with ❤️ by [Marc Joseph](https://github.com/imtweetix)
 </p>
 
 <p align="center">

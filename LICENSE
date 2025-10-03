@@ -1,21 +1,55 @@
-MIT License
+PROPRIETARY SOFTWARE LICENSE
 
-Copyright (c) 2024 WebP Converter
+Copyright (c) 2025 WebP Image Converter
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+All rights reserved.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+TERMS AND CONDITIONS
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+1. GRANT OF LICENSE
+   This license grants you the right to view the source code for educational,
+   reference, and contribution purposes only.
+
+2. RESTRICTIONS
+   You may NOT:
+   - Use this software for commercial purposes
+   - Deploy, host, or distribute this software
+   - Create derivative works based on this software
+   - Sell, rent, lease, or transfer this software
+   - Remove or modify copyright notices
+   - Claim ownership of this software or any portion thereof
+
+3. CONTRIBUTIONS
+   You may contribute to this project by:
+   - Submitting bug reports and feature requests via GitHub Issues
+   - Proposing code changes through Pull Requests
+   - Providing feedback and suggestions
+
+   By contributing, you agree that your contributions will become part of this
+   proprietary software and subject to the same license terms.
+
+4. AUTHORIZED USE
+   The only authorized way to use this software is through the official web
+   application hosted at: https://image-2-webp.netlify.app/
+
+5. INTELLECTUAL PROPERTY
+   This software and all related materials are the exclusive property of the
+   copyright holder. No ownership rights are transferred under this license.
+
+6. TERMINATION
+   This license is effective until terminated. Your rights under this license
+   will terminate automatically if you violate any of these terms.
+
+7. DISCLAIMER OF WARRANTIES
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+8. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+   USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For commercial licensing inquiries or permissions beyond the scope of this
+license, please contact the copyright holder.
