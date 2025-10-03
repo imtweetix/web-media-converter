@@ -93,6 +93,7 @@ The converter includes intelligent image resizing to help reduce file sizes whil
 | ---------------------- | ---------------------------- |
 | `npm run dev`          | Start development server     |
 | `npm run build`        | Build for production         |
+| `npm run build:check`  | Type check + build           |
 | `npm run preview`      | Preview production build     |
 | `npm run type-check`   | Run TypeScript type checking |
 | `npm run format`       | Format code with Prettier    |
@@ -151,10 +152,33 @@ webp-image-converter/
 │   └── ...
 ├── src/
 │   ├── components/          # React components
+│   │   ├── ui/             # Reusable UI components
+│   │   │   ├── Button.tsx  # Button component with variants
+│   │   │   ├── Input.tsx   # Input component with ref forwarding
+│   │   │   ├── Card.tsx    # Card layout components
+│   │   │   ├── ProgressBar.tsx # Progress indicator
+│   │   │   ├── StatusBadge.tsx # Status display
+│   │   │   └── index.ts    # UI components exports
+│   │   └── features/       # Feature-specific components
+│   │       ├── Header.tsx  # App header
+│   │       ├── UploadArea.tsx # File upload interface
+│   │       ├── ConversionSettings.tsx # Quality & resize controls
+│   │       ├── FilesList.tsx # Files management
+│   │       ├── FileItem.tsx # Individual file display
+│   │       ├── InfoCard.tsx # WebP information
+│   │       └── index.ts    # Feature components exports
+│   ├── hooks/              # Custom React hooks
+│   │   ├── useFileManager.ts # File state management
+│   │   ├── useConversion.ts # Conversion logic
+│   │   ├── useDownload.ts  # Download functionality
+│   │   ├── useDragAndDrop.ts # Drag & drop handling
+│   │   └── index.ts        # Hooks exports
+│   ├── services/           # Business logic services
+│   │   └── conversionService.ts # Pure conversion functions
 │   ├── utils/              # Utility functions
 │   │   └── zipUtils.ts     # ZIP file creation
 │   ├── types.ts            # TypeScript definitions
-│   ├── App.tsx             # Main application
+│   ├── App.tsx             # Main application (95 lines)
 │   ├── main.tsx            # Application entry point
 │   └── index.css           # Global styles
 ├── dist/                   # Production build output
@@ -174,8 +198,9 @@ webp-image-converter/
 
 ### Styling & UI
 - **[Tailwind CSS 3.4](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[Lucide React](https://lucide.dev/)** - Beautiful icons
+- **[FontAwesome](https://fontawesome.com/)** - Professional icon library
 - **CSS Grid & Flexbox** - Modern layouts
+- **Component Architecture** - Modular UI with separation of concerns
 
 ### Development Tools
 - **[Prettier](https://prettier.io/)** - Code formatting
@@ -245,7 +270,7 @@ Found a bug or have a feature idea? Please [open an issue](https://github.com/yo
 - [React Team](https://reactjs.org/community/team.html) for the amazing framework
 - [Vite Team](https://vitejs.dev/team/) for the incredible build tool
 - [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
-- [Lucide](https://lucide.dev/) for the beautiful icons
+- [FontAwesome](https://fontawesome.com/) for the professional icons
 
 ---
 

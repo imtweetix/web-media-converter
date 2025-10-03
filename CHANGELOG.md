@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-10-03
+
+### Added
+- 🏗️ **Component Architecture Refactor**: Complete separation of concerns implementation
+  - Organized folder structure with `components/ui` and `components/features`
+  - Custom hooks for business logic (`useFileManager`, `useConversion`, `useDownload`, `useDragAndDrop`)
+  - Service layer for pure business functions (`ConversionService`)
+  - Reusable UI components (`Button`, `Input`, `Card`, `ProgressBar`, `StatusBadge`)
+
+### Enhanced
+- 🎨 **UI/UX Improvements**:
+  - Centered "Choose Files" button alignment
+  - Fixed range slider background fill to match handle position
+  - Green download button when files are ready for download
+  - Enhanced button variants (primary, secondary, danger, success)
+- 🔧 **Developer Experience**:
+  - Proper TypeScript ref forwarding with `forwardRef`
+  - Clean component interfaces and prop types
+  - Modular architecture for easier testing and maintenance
+
+### Technical
+- 📐 **Code Organization**: Reduced main App component from 929 lines to 95 lines
+- 🧩 **Modularity**: Separated UI, business logic, and state management
+- 🎯 **Type Safety**: Enhanced TypeScript support with proper ref handling
+- 🧹 **Clean Architecture**: Clear separation between presentation and business logic
+- ⚡ **Performance**: Maintained bundle size while improving code maintainability
+
+### Fixed
+- 🔧 Range slider fill alignment with handle position
+- 🎯 TypeScript ref forwarding warnings
+- 🎨 Button styling consistency across variants
+
 ## [1.1.0] - 2025-10-02
 
 ### Added
