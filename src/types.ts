@@ -1,3 +1,9 @@
+export interface ResizeSettings {
+  enabled: boolean;
+  maxWidth: number;
+  maxHeight: number;
+}
+
 export interface FileItem {
   id: string | number;
   file: File;
@@ -9,10 +15,14 @@ export interface FileItem {
   convertedBlob: Blob | null;
   convertedSize: number | null;
   convertedPreview: string | null;
+  resizeSettings?: ResizeSettings;
+  originalDimensions?: { width: number; height: number };
+  finalDimensions?: { width: number; height: number };
 }
 
 export interface ConversionSettings {
   quality: number;
+  resize: ResizeSettings;
 }
 
 export interface ZipEntry {

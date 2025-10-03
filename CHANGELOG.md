@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-10-02
+
+### Added
+- 🖼️ **Image Resizing Feature**: Automatically resize images while maintaining aspect ratio
+  - Global resize settings with default 2048px × 2048px maximum dimensions
+  - Per-image resize controls for custom dimensions
+  - Smart resizing that only downsizes (never upscales) large images
+  - Visual dimension display showing original → final sizes
+  - "Apply to All" functionality for bulk resize settings
+- 📏 **Enhanced File Information**: Display original and final image dimensions
+- 🎛️ **Improved Settings Panel**: Dedicated resize controls alongside quality settings
+- 🔧 **Flexible Resize Logic**: Choose between global settings or custom per-image dimensions
+
+### Enhanced
+- 📊 **Better File Size Display**: Shows dimension changes alongside file size savings
+- 🎨 **Improved UI**: Cleaner settings panel with better organization
+- 🧠 **Smart Defaults**: Automatic resize to 2048px helps reduce file sizes for large images
+
+### Technical
+- 📐 **Canvas-based Resizing**: Efficient HTML5 Canvas API implementation
+- 🎯 **Aspect Ratio Preservation**: Mathematical scaling maintains image proportions
+- 🔄 **Real-time Updates**: Dynamic dimension calculation and display
+- 🧹 **Memory Optimization**: Proper cleanup of resized image data
+
 ## [1.0.0] - 2024-10-02
 
 ### Added

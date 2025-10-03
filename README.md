@@ -13,15 +13,17 @@
 ## ✨ Features
 
 - 🚀 **Lightning Fast**: Client-side processing with HTML5 Canvas API
+- 🖼️ **Smart Resizing**: Automatically resize images while maintaining aspect ratio
 - 🎨 **Transparency Support**: Preserves alpha channels for PNG files
 - 📦 **Batch Processing**: Convert multiple images simultaneously
 - 💾 **Smart Downloads**: Auto-generates ZIP files for multiple conversions
 - 🎯 **Quality Control**: Adjustable compression (10-100%)
+- 📏 **Dimension Control**: Global and per-image resize settings with 2048px defaults
 - 🔒 **Privacy First**: No server uploads - everything stays in your browser
 - 📱 **Responsive Design**: Works seamlessly on all devices
 - ⚡ **Modern Stack**: Built with React 19, TypeScript, and Vite
 - 🛡️ **Security Focused**: Content Security Policy and input validation
-- 📊 **File Insights**: Shows original vs compressed file sizes with savings
+- 📊 **File Insights**: Shows original vs compressed file sizes and dimension changes
 
 ## 🎯 Supported Formats
 
@@ -62,6 +64,27 @@
    ```
    http://localhost:3000
    ```
+
+## 🖼️ Image Resizing
+
+The converter includes intelligent image resizing to help reduce file sizes while maintaining quality:
+
+### **Global Resize Settings**
+- **Default**: 2048px × 2048px maximum dimensions
+- **Behavior**: Applied to all images automatically
+- **Smart Scaling**: Only downsizes large images (never upscales)
+- **Aspect Ratio**: Always preserved during resizing
+
+### **Per-Image Control**
+- **Individual Override**: Check the resize box for any image to use custom dimensions
+- **Flexible Settings**: Each image can have different resize settings
+- **Visual Feedback**: See original → final dimensions before conversion
+
+### **How It Works**
+1. **Upload images** → Automatically resized to global settings (2048px default)
+2. **Adjust global settings** → Changes apply to all images without individual overrides
+3. **Enable individual resize** → Check the box to set custom dimensions for specific images
+4. **Apply to All** → Reset all images to use current global settings
 
 
 ## 📦 Available Scripts
@@ -114,7 +137,8 @@ This project is optimized for Netlify deployment with pre-configured headers and
 
 - **Content Security Policy**: Prevents XSS attacks
 - **File Size Validation**: 50MB maximum file size
-- **Dimension Limits**: 16,384px maximum width/height
+- **Dimension Limits**: 16,384px maximum width/height for input images
+- **Resize Validation**: Smart bounds checking for custom resize dimensions
 - **Input Sanitization**: Secure filename handling
 - **Client-Side Only**: No data ever leaves your browser
 
@@ -201,13 +225,19 @@ Found a bug or have a feature idea? Please [open an issue](https://github.com/yo
 - **Processing Speed**: Depends on image size and device capabilities
 - **Memory Usage**: Optimized with proper cleanup
 
-## 🌟 Why WebP?
+## 🌟 Why WebP + Resizing?
 
-WebP provides:
+**WebP Format Benefits:**
 - **25-50% smaller** file sizes compared to JPEG/PNG
 - **Better compression** with similar quality
 - **Transparency support** like PNG
 - **Wide browser support** (96%+ global coverage)
+
+**Smart Resizing Benefits:**
+- **Automatic optimization** for web use with 2048px defaults
+- **Significant file size reduction** for large photos (4K+ images)
+- **Maintained quality** through aspect ratio preservation
+- **Flexible control** with global and per-image settings
 - **Faster loading** websites and applications
 
 ## ❤️ Acknowledgments

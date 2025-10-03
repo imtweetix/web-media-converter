@@ -8,7 +8,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FileItem, ProgressCallback } from './types';
+import { FileItem, ProgressCallback, ResizeSettings } from './types';
 import { createZipWithBrowserAPIs, downloadBlob } from './utils/zipUtils';
 
 function App() {
@@ -17,7 +17,38 @@ function App() {
   const [isConverting, setIsConverting] = useState<boolean>(false);
   const [isCreatingZip, setIsCreatingZip] = useState<boolean>(false);
   const [dragActive, setDragActive] = useState<boolean>(false);
+  const [globalResizeSettings, setGlobalResizeSettings] = useState<ResizeSettings>({
+    enabled: true,
+    maxWidth: 2048,
+    maxHeight: 2048,
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const calculateResizeDimensions = useCallback(
+    (originalWidth: number, originalHeight: number, resizeSettings: ResizeSettings) => {
+      if (!resizeSettings.enabled) {
+        return { width: originalWidth, height: originalHeight };
+      }
+
+      const { maxWidth, maxHeight } = resizeSettings;
+
+      // Only downsize, never upscale
+      if (originalWidth <= maxWidth && originalHeight <= maxHeight) {
+        return { width: originalWidth, height: originalHeight };
+      }
+
+      // Calculate scale factor to maintain aspect ratio
+      const scaleX = maxWidth / originalWidth;
+      const scaleY = maxHeight / originalHeight;
+      const scale = Math.min(scaleX, scaleY);
+
+      return {
+        width: Math.round(originalWidth * scale),
+        height: Math.round(originalHeight * scale),
+      };
+    },
+    []
+  );
 
   const handleDrag = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -73,6 +104,7 @@ function App() {
       convertedBlob: null,
       convertedSize: null,
       convertedPreview: null,
+      resizeSettings: { enabled: false, maxWidth: 2048, maxHeight: 2048 },
     }));
 
     setFiles(prev => [...prev, ...processedFiles]);
@@ -135,14 +167,33 @@ function App() {
               return;
             }
 
-            canvas.width = img.width;
-            canvas.height = img.height;
+            // Store original dimensions
+            const originalDimensions = { width: img.width, height: img.height };
+
+            // Calculate final dimensions based on resize settings
+            // Use global settings if individual resize is not enabled, otherwise use individual settings
+            const effectiveResizeSettings = file.resizeSettings?.enabled
+              ? file.resizeSettings
+              : globalResizeSettings;
+            const finalDimensions = calculateResizeDimensions(img.width, img.height, effectiveResizeSettings);
+
+            // Update file with dimensions info
+            setFiles(prev =>
+              prev.map(f =>
+                f.id === file.id
+                  ? { ...f, originalDimensions, finalDimensions }
+                  : f
+              )
+            );
+
+            canvas.width = finalDimensions.width;
+            canvas.height = finalDimensions.height;
 
             updateProgress(60);
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'source-over';
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0, finalDimensions.width, finalDimensions.height);
 
             updateProgress(80);
 
@@ -191,7 +242,7 @@ function App() {
         }
       });
     },
-    [quality]
+    [quality, calculateResizeDimensions, globalResizeSettings]
   );
 
   const convertAllFiles = useCallback(async (): Promise<void> => {
@@ -342,6 +393,31 @@ function App() {
     []
   );
 
+
+  const handleGlobalResizeChange = useCallback(
+    (field: 'maxWidth' | 'maxHeight', value: number) => {
+      setGlobalResizeSettings(prev => ({ ...prev, [field]: value }));
+    },
+    []
+  );
+
+  const updateFileResizeSettings = useCallback(
+    (fileId: string | number, resizeSettings: ResizeSettings) => {
+      setFiles(prev =>
+        prev.map(f =>
+          f.id === fileId ? { ...f, resizeSettings } : f
+        )
+      );
+    },
+    []
+  );
+
+  const applyGlobalResizeToAll = useCallback(() => {
+    setFiles(prev =>
+      prev.map(f => ({ ...f, resizeSettings: { ...globalResizeSettings } }))
+    );
+  }, [globalResizeSettings]);
+
   useEffect(() => {
     return () => {
       files.forEach((file: FileItem) => {
@@ -436,6 +512,52 @@ function App() {
               PNG files with transparency automatically use higher quality to
               preserve alpha channel.
             </p>
+
+            <div className='mt-6 pt-6 border-t border-gray-200'>
+              <div className='flex items-center justify-between mb-4'>
+                <h4 className='text-gray-700 font-medium'>Global Resize Settings</h4>
+                <button
+                  onClick={applyGlobalResizeToAll}
+                  className='text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-200 transition-colors'
+                >
+                  Apply to All
+                </button>
+              </div>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Max Width (px)
+                  </label>
+                  <input
+                    type='number'
+                    min='100'
+                    max='16384'
+                    value={globalResizeSettings.maxWidth}
+                    onChange={(e) => handleGlobalResizeChange('maxWidth', parseInt(e.target.value) || 2048)}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Max Height (px)
+                  </label>
+                  <input
+                    type='number'
+                    min='100'
+                    max='16384'
+                    value={globalResizeSettings.maxHeight}
+                    onChange={(e) => handleGlobalResizeChange('maxHeight', parseInt(e.target.value) || 2048)}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+                  />
+                </div>
+              </div>
+
+              <p className='text-sm text-gray-500 mt-2'>
+                Images will be resized to fit within these dimensions while maintaining aspect ratio.
+                Only images larger than these dimensions will be resized (no upscaling).
+              </p>
+            </div>
           </div>
         )}
 
@@ -545,14 +667,24 @@ function App() {
                         </button>
                       </div>
 
-                      <div className='flex items-center space-x-4 text-sm text-gray-600'>
+                      <div className='flex items-center space-x-4 text-sm text-gray-600 mb-2'>
                         <span>Original: {formatFileSize(file.size)}</span>
+                        {file.originalDimensions && (
+                          <span>
+                            {file.originalDimensions.width}×{file.originalDimensions.height}
+                          </span>
+                        )}
                         {file.convertedSize && (
                           <>
                             <span>→</span>
                             <span>
                               WebP: {formatFileSize(file.convertedSize)}
                             </span>
+                            {file.finalDimensions && (
+                              <span>
+                                {file.finalDimensions.width}×{file.finalDimensions.height}
+                              </span>
+                            )}
                             <span className='text-green-600 font-medium'>
                               (
                               {getSavingsPercentage(
@@ -564,6 +696,71 @@ function App() {
                           </>
                         )}
                       </div>
+
+                      {/* Individual Resize Settings */}
+                      {file.status === 'pending' && (
+                        <div className='mb-3 p-3 bg-gray-50 rounded-lg'>
+                          <div className='flex items-center justify-between mb-2'>
+                            <div className='flex items-center'>
+                              <input
+                                type='checkbox'
+                                id={`resize-${file.id}`}
+                                checked={file.resizeSettings?.enabled || false}
+                                onChange={(e) => {
+                                  const currentSettings = file.resizeSettings || globalResizeSettings;
+                                  updateFileResizeSettings(file.id, {
+                                    ...currentSettings,
+                                    enabled: e.target.checked,
+                                  });
+                                }}
+                                className='h-3 w-3 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+                              />
+                              <label htmlFor={`resize-${file.id}`} className='ml-2 text-sm text-gray-700'>
+                                Resize this image
+                              </label>
+                            </div>
+                          </div>
+
+                          {file.resizeSettings?.enabled && (
+                            <div className='grid grid-cols-2 gap-2'>
+                              <div>
+                                <input
+                                  type='number'
+                                  placeholder='Max Width'
+                                  min='100'
+                                  max='16384'
+                                  value={file.resizeSettings.maxWidth}
+                                  onChange={(e) => {
+                                    const currentSettings = file.resizeSettings || globalResizeSettings;
+                                    updateFileResizeSettings(file.id, {
+                                      ...currentSettings,
+                                      maxWidth: parseInt(e.target.value) || 2048,
+                                    });
+                                  }}
+                                  className='w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+                                />
+                              </div>
+                              <div>
+                                <input
+                                  type='number'
+                                  placeholder='Max Height'
+                                  min='100'
+                                  max='16384'
+                                  value={file.resizeSettings.maxHeight}
+                                  onChange={(e) => {
+                                    const currentSettings = file.resizeSettings || globalResizeSettings;
+                                    updateFileResizeSettings(file.id, {
+                                      ...currentSettings,
+                                      maxHeight: parseInt(e.target.value) || 2048,
+                                    });
+                                  }}
+                                  className='w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Progress Bar */}
                       {(file.status === 'converting' ||
