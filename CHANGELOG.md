@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-10-08
+
+### 🎯 **Enhanced Video Conversion & Settings Management**
+
+### Added
+- 🎬 **Dynamic FPS Detection**: Automatically detects and preserves original video frame rates
+  - Uses `requestVideoFrameCallback` API for accurate FPS measurement
+  - Intelligent snapping to common frame rates (23.976, 29.97, etc.)
+  - Fallback support for browsers without advanced video APIs
+- ⚙️ **Frame Rate Control**: Complete FPS customization options
+  - Industry-standard FPS options: 12, 15, 24, 25, 30, 48, 50, 60 FPS
+  - Global FPS settings in conversion panel
+  - Individual per-video FPS overrides
+  - "Default" option preserves original video timing
+- 🔧 **Enhanced Global Settings Management**: Improved "Apply to All" functionality
+  - Individual settings checkboxes automatically uncheck after applying global settings
+  - Cleaner interface with better settings hierarchy
+  - Consistent behavior for both image and video settings
+
+### Fixed
+- 🎥 **Video Preview Thumbnails**: Converted videos now show proper placeholder icons instead of broken images
+- ⚙️ **Global Video Resolution**: Global resolution settings now properly apply to conversions without requiring "Apply to All"
+- 🔧 **Settings Logic**: Fixed individual vs global settings precedence for better user experience
+- 📐 **Bitrate Optimization**: Improved video compression settings for smaller file sizes
+  - Reduced default bitrate calculations by 75%
+  - Lower default CRF (28 instead of 23) for better compression
+  - Optimized frame rate calculations
+
+### Improved
+- 🚫 **File Format Support**: Removed TIFF support (browser incompatible) and restricted AVI/WMV uploads
+- 📱 **User Interface**: Updated About panel to include WebM format information
+- 🎯 **Conversion Accuracy**: Enhanced video settings propagation and validation
+
 ## [2.0.0] - 2025-10-07
 
 ### 🎬 **MAJOR RELEASE: Video Conversion Support**

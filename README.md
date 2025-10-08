@@ -26,11 +26,14 @@
 - 📏 **Dimension Control**: Global and per-image resize settings with 2048px defaults
 
 ### 🎬 **Video Conversion (WebM)**
-- 🎥 **Format Support**: Convert MP4, AVI, MOV, WMV to WebM
-- 🎚️ **Bitrate Control**: Adjustable video quality (100-10000 kbps)
-- 🔊 **Audio Options**: Include or exclude audio tracks
-- 🖼️ **Video Thumbnails**: Automatic thumbnail generation for preview
-- ⚡ **Browser-based**: Uses MediaRecorder API for efficient conversion
+- 🎥 **Format Support**: Convert MP4, MOV, 3GP to WebM (optimized for web compatibility)
+- 🎬 **Dynamic FPS Detection**: Automatically detects and preserves original frame rates
+- ⚙️ **Frame Rate Control**: Choose from industry-standard FPS (12, 15, 24, 25, 30, 48, 50, 60)
+- 📐 **Resolution Scaling**: Multiple resolution presets with custom dimension support
+- 🎚️ **Advanced Quality Control**: CRF-based quality settings for optimal compression
+- 🔊 **Audio Options**: Include or exclude audio tracks during conversion
+- 🖼️ **Smart Previews**: Automatic placeholder generation for converted videos
+- ⚡ **Browser-based**: Uses MediaRecorder API with VP8/VP9 codec support
 
 ### 🛠️ **Universal Features**
 - 📦 **Batch Processing**: Convert multiple files simultaneously
@@ -44,23 +47,21 @@
 ## 🎯 Supported Formats
 
 ### 🖼️ **Images → WebP**
-| Input Formats | Output Format            |
-| ------------- | ------------------------ |
-| JPEG, JPG     | WebP                     |
-| PNG           | WebP (with transparency) |
-| GIF           | WebP                     |
-| BMP           | WebP                     |
-| TIFF          | WebP                     |
+| Input Formats | Output Format            | Max Size |
+| ------------- | ------------------------ | -------- |
+| JPEG, JPG     | WebP                     | 50MB     |
+| PNG           | WebP (with transparency) | 50MB     |
+| GIF           | WebP                     | 50MB     |
+| BMP           | WebP                     | 50MB     |
 
 ### 🎬 **Videos → WebM**
-| Input Formats | Output Format | Max Size |
-| ------------- | ------------- | -------- |
-| MP4           | WebM          | 500MB    |
-| AVI           | WebM          | 500MB    |
-| MOV           | WebM          | 500MB    |
-| WMV           | WebM          | 500MB    |
-| 3GP           | WebM          | 500MB    |
-| OGV           | WebM          | 500MB    |
+| Input Formats | Output Format | Max Size | Features |
+| ------------- | ------------- | -------- | -------- |
+| MP4           | WebM          | 500MB    | Full support with FPS detection |
+| MOV           | WebM          | 500MB    | Full support with FPS detection |
+| 3GP           | WebM          | 500MB    | Full support with FPS detection |
+
+> **Note**: AVI and WMV formats are not supported due to browser compatibility limitations. For best results, please use MP4, MOV, or 3GP formats.
 
 ## 🚀 Using the Application
 

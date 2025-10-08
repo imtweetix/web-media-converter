@@ -33,7 +33,10 @@ export function useConversion() {
 
           if (file.isVideo) {
             // Use video conversion
-            const effectiveVideoSettings = file.videoSettings || globalVideoSettings;
+            // Use individual settings only if explicitly enabled, otherwise use global settings
+            const effectiveVideoSettings = (file.videoSettings?.enabled)
+              ? file.videoSettings
+              : globalVideoSettings;
             convertedBlob = await VideoConversionService.convertToWebM(
               file,
               effectiveVideoSettings,

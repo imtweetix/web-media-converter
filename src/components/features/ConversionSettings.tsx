@@ -1,8 +1,8 @@
 import { faGear } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ResizeSettings, VideoSettings, FileItem } from '../../types';
-import { Button, Card, Input } from '../ui';
 import { useState } from 'react';
+import { FileItem, ResizeSettings, VideoSettings } from '../../types';
+import { Button, Card, Input } from '../ui';
 
 interface ConversionSettingsProps {
   files: FileItem[];
@@ -45,7 +45,9 @@ export function ConversionSettings({
     onQualityChange(Number(e.target.value));
   };
 
-  const handleVideoResolutionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleVideoResolutionChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const resolution = e.target.value as VideoSettings['resolution'];
     onGlobalVideoChange({
       ...globalVideoSettings,
@@ -53,15 +55,15 @@ export function ConversionSettings({
       // Clear custom dimensions when not using custom
       ...(resolution !== 'custom' && {
         customWidth: undefined,
-        customHeight: undefined
-      })
+        customHeight: undefined,
+      }),
     });
   };
 
   const handleCrfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onGlobalVideoChange({
       ...globalVideoSettings,
-      crf: Number(e.target.value)
+      crf: Number(e.target.value),
     });
   };
 
@@ -69,7 +71,7 @@ export function ConversionSettings({
     const fps = e.target.value as VideoSettings['fps'];
     onGlobalVideoChange({
       ...globalVideoSettings,
-      fps
+      fps,
     });
   };
 
@@ -103,7 +105,8 @@ export function ConversionSettings({
   // Calculate CRF slider percentage (inverted because lower CRF = better quality)
   const crfMin = 0;
   const crfMax = 53;
-  const crfPercentage = ((globalVideoSettings.crf - crfMin) / (crfMax - crfMin)) * 100;
+  const crfPercentage =
+    ((globalVideoSettings.crf - crfMin) / (crfMax - crfMin)) * 100;
 
   // Video resolution options
   const videoResolutions = [
@@ -161,9 +164,7 @@ export function ConversionSettings({
 
       <div className='pt-6 border-t border-gray-200'>
         <div className='flex items-center justify-between mb-4'>
-          <h4 className='text-gray-700 font-medium'>
-            Global Image Settings
-          </h4>
+          <h4 className='text-gray-700 font-medium'>Global Image Settings</h4>
           <Button
             onClick={handleApplyImageSettings}
             variant='secondary'
@@ -173,8 +174,9 @@ export function ConversionSettings({
           >
             {isApplyingImageSettings
               ? 'Applying...'
-              : hasMixedTypes ? 'Apply to All Images' : 'Apply to All'
-            }
+              : hasMixedTypes
+                ? 'Apply to All Images'
+                : 'Apply to All'}
           </Button>
         </div>
 
@@ -248,15 +250,13 @@ export function ConversionSettings({
       </div>
 
       <p className='text-sm text-gray-500 mb-6'>
-        Lower values = better quality but larger files and longer conversion times.
-        Recommended: 15-35 (23 is default).
+        Lower values = better quality but larger files and longer conversion
+        times. Recommended: 15-35 (28 is default).
       </p>
 
       <div className='pt-6 border-t border-gray-200'>
         <div className='flex items-center justify-between mb-6'>
-          <h4 className='text-gray-700 font-medium'>
-            Global Video Settings
-          </h4>
+          <h4 className='text-gray-700 font-medium'>Global Video Settings</h4>
           <Button
             onClick={handleApplyVideoSettings}
             variant='secondary'
@@ -266,67 +266,68 @@ export function ConversionSettings({
           >
             {isApplyingVideoSettings
               ? 'Applying...'
-              : hasMixedTypes ? 'Apply to All Videos' : 'Apply to All'
-            }
+              : hasMixedTypes
+                ? 'Apply to All Videos'
+                : 'Apply to All'}
           </Button>
         </div>
 
         <div className='mb-6'>
-        <label className='block text-sm font-medium text-gray-700 mb-2'>
-          Resolution
-        </label>
-        <select
-          value={globalVideoSettings.resolution}
-          onChange={handleVideoResolutionChange}
-          className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-        >
-          {videoResolutions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>
+            Resolution
+          </label>
+          <select
+            value={globalVideoSettings.resolution}
+            onChange={handleVideoResolutionChange}
+            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+          >
+            {videoResolutions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
-        {globalVideoSettings.resolution === 'custom' && (
-          <div className='grid grid-cols-2 gap-4 mt-4'>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Width (px)
-              </label>
-              <Input
-                type='number'
-                min='100'
-                max='7680'
-                value={globalVideoSettings.customWidth || ''}
-                onChange={e =>
-                  onGlobalVideoChange({
-                    ...globalVideoSettings,
-                    customWidth: parseInt(e.target.value) || undefined
-                  })
-                }
-                placeholder='1920'
-              />
+          {globalVideoSettings.resolution === 'custom' && (
+            <div className='grid grid-cols-2 gap-4 mt-4'>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Width (px)
+                </label>
+                <Input
+                  type='number'
+                  min='100'
+                  max='7680'
+                  value={globalVideoSettings.customWidth || ''}
+                  onChange={e =>
+                    onGlobalVideoChange({
+                      ...globalVideoSettings,
+                      customWidth: parseInt(e.target.value) || undefined,
+                    })
+                  }
+                  placeholder='1920'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Height (px)
+                </label>
+                <Input
+                  type='number'
+                  min='100'
+                  max='4320'
+                  value={globalVideoSettings.customHeight || ''}
+                  onChange={e =>
+                    onGlobalVideoChange({
+                      ...globalVideoSettings,
+                      customHeight: parseInt(e.target.value) || undefined,
+                    })
+                  }
+                  placeholder='1080'
+                />
+              </div>
             </div>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Height (px)
-              </label>
-              <Input
-                type='number'
-                min='100'
-                max='4320'
-                value={globalVideoSettings.customHeight || ''}
-                onChange={e =>
-                  onGlobalVideoChange({
-                    ...globalVideoSettings,
-                    customHeight: parseInt(e.target.value) || undefined
-                  })
-                }
-                placeholder='1080'
-              />
-            </div>
-          </div>
-        )}
+          )}
         </div>
 
         <div className='mb-6'>
@@ -354,7 +355,7 @@ export function ConversionSettings({
               onChange={e =>
                 onGlobalVideoChange({
                   ...globalVideoSettings,
-                  audioEnabled: e.target.checked
+                  audioEnabled: e.target.checked,
                 })
               }
               className='mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
@@ -402,7 +403,9 @@ export function ConversionSettings({
             </button>
           </div>
 
-          {activeTab === 'images' ? renderImageSettings() : renderVideoSettings()}
+          {activeTab === 'images'
+            ? renderImageSettings()
+            : renderVideoSettings()}
         </div>
       ) : hasImages ? (
         renderImageSettings()
