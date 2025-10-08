@@ -1,9 +1,10 @@
 [build]
   publish = "dist"
-  command = "npm ci && npm run build"
+  command = "chmod +x scripts/netlify-pre-build.sh && ./scripts/netlify-pre-build.sh && npm run build:netlify"
 
 [build.environment]
   NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
 
 [[redirects]]
   from = "/*"
