@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-10-07
+
+### 🎬 **MAJOR RELEASE: Video Conversion Support**
+
+This is a major version release that transforms the WebP Image Converter into a unified **WebP & WebM Media Converter** with full video conversion capabilities.
+
+### Added
+- 🎥 **Video to WebM Conversion**: Complete video conversion pipeline
+  - Support for MP4, AVI, MOV, WMV, 3GP, OGV input formats
+  - WebM output with VP8 codec and configurable bitrate
+  - Browser-based conversion using MediaRecorder API
+  - 500MB maximum file size limit for videos
+- 🎚️ **Video Conversion Settings**:
+  - Bitrate control (100-10000 kbps, default 1000 kbps)
+  - Audio inclusion toggle (enable/disable audio tracks)
+  - Global video settings applied to all uploaded videos
+- 🖼️ **Video Thumbnail Generation**: Automatic preview thumbnails for video files
+- 📁 **Unified File Handling**: Single upload area for both images and videos
+- 🔍 **Enhanced File Validation**: Separate validation logic for images vs videos
+- 📊 **Video File Information**: Duration, dimensions, and conversion progress display
+
+### Enhanced
+- 🏷️ **Rebranding**: App renamed to "WebP & WebM Media Converter"
+- 📝 **UI Updates**: Upload area and help text updated for dual format support
+- 🎛️ **Settings Panel**: Added video conversion controls alongside image settings
+- 🔧 **File Management**: Enhanced file manager with video-specific operations
+- 📦 **Type System**: Extended TypeScript interfaces for video support
+- 🎯 **Conversion Logic**: Unified conversion flow handling both images and videos
+
+### Technical
+- 🏗️ **New Service**: `VideoConversionService` for WebM conversion operations
+- 🔄 **Enhanced Hooks**: Updated conversion hooks to handle dual format processing
+- 📐 **Canvas + MediaRecorder**: Combined HTML5 Canvas and MediaRecorder APIs
+- 🎭 **Smart Format Detection**: Automatic routing to appropriate conversion service
+- 🧹 **Memory Management**: Proper cleanup for both image and video resources
+- ⚡ **Async Processing**: Non-blocking video conversion with progress tracking
+
+### Performance
+- 📏 **File Size Limits**:
+  - Images: 50MB maximum (unchanged)
+  - Videos: 500MB maximum (new)
+- 🎬 **Video Processing**: Browser-dependent performance for video encoding
+- 📦 **Bundle Impact**: Minimal size increase while adding major functionality
+
+### Security
+- 🛡️ **Enhanced Validation**: Strict video format validation
+- 🔍 **Type Checking**: Comprehensive MIME type verification for videos
+- 🎥 **Safe Encoding**: Browser-sandboxed video processing
+- 📏 **Size Limits**: Appropriate limits for different media types
+
+### Breaking Changes
+- 🔄 **Version Bump**: Major version due to significant feature addition
+- 📱 **App Identity**: Complete rebranding from image-only to media converter
+- 🏗️ **API Changes**: Enhanced component interfaces for video support
+
 ## [1.2.1] - 2025-10-03
 
 ### Added
@@ -105,8 +160,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 📦 Optimized vendor chunks
 
 ### Supported Formats
-- **Input**: JPEG, PNG, GIF, BMP, TIFF
-- **Output**: WebP with transparency support
+- **Images**: JPEG, PNG, GIF, BMP, TIFF → WebP with transparency support
+- **Videos**: MP4, AVI, MOV, WMV, 3GP, OGV → WebM with VP8 codec
 
 ---
 

@@ -5,7 +5,7 @@ import {
   faBoxArchive,
   faTrashCan,
 } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
-import { FileItem as FileItemType, ResizeSettings } from '../../types';
+import { FileItem as FileItemType, ResizeSettings, VideoSettings } from '../../types';
 import { Card, CardHeader, Button } from '../ui';
 import { FileItem } from './FileItem';
 
@@ -20,6 +20,8 @@ interface FilesListProps {
   onRemoveFile: (id: string | number) => void;
   onDownloadFile: (file: FileItemType) => void;
   onUpdateResizeSettings: (fileId: string | number, settings: ResizeSettings) => void;
+  onUpdateVideoSettings: (fileId: string | number, settings: VideoSettings) => void;
+  onUpdateFile: (id: string | number, updates: Partial<FileItemType>) => void;
 }
 
 export function FilesList({
@@ -33,6 +35,8 @@ export function FilesList({
   onRemoveFile,
   onDownloadFile,
   onUpdateResizeSettings,
+  onUpdateVideoSettings,
+  onUpdateFile,
 }: FilesListProps) {
   const convertedFiles = files.filter(f => f.convertedBlob);
   const allConverted = files.every(f => f.status === 'converted' || f.status === 'error');
@@ -95,6 +99,8 @@ export function FilesList({
             onRemove={onRemoveFile}
             onDownload={onDownloadFile}
             onUpdateResizeSettings={onUpdateResizeSettings}
+            onUpdateVideoSettings={onUpdateVideoSettings}
+            onUpdateFile={onUpdateFile}
           />
         ))}
       </div>

@@ -1,4 +1,5 @@
-import { FileItem, ProgressCallback, ResizeSettings } from '../types';
+import { FileItem, ProgressCallback, ResizeSettings, VideoSettings } from '../types';
+import { VideoConversionService } from './videoConversionService';
 
 export class ConversionService {
   private static calculateResizeDimensions(
@@ -139,13 +140,19 @@ export class ConversionService {
     });
   }
 
-  static validateFile(file: File): { isValid: boolean; error?: string } {
-    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB limit
+  static validateFile(file: File): { isValid: boolean; error?: string; warning?: string } {
+    // Check if it's a video file first
+    if (file.type.startsWith('video/')) {
+      return VideoConversionService.validateVideoFile(file);
+    }
+
+    // Original image validation
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB limit for images
 
     if (file.size > MAX_FILE_SIZE) {
       return {
         isValid: false,
-        error: `File "${file.name}" is too large. Maximum file size is 50MB.`,
+        error: `File "${file.name}" is too large. Maximum file size is 50MB for images.`,
       };
     }
 
@@ -156,7 +163,6 @@ export class ConversionService {
       'image/png',
       'image/gif',
       'image/bmp',
-      'image/tiff',
       'image/webp',
     ].includes(file.type.toLowerCase());
 
@@ -170,19 +176,34 @@ export class ConversionService {
     return { isValid: true };
   }
 
-  static createFileItem(file: File): FileItem {
+  static async createFileItem(file: File): Promise<FileItem> {
+    const isVideo = file.type.startsWith('video/');
+    let preview = URL.createObjectURL(file);
+
+    // For videos, try to generate a thumbnail
+    if (isVideo) {
+      try {
+        preview = await VideoConversionService.getVideoThumbnail(file);
+      } catch (error) {
+        console.warn('Could not generate video thumbnail:', error);
+        // Keep the video file URL as fallback
+      }
+    }
+
     return {
       id: crypto.randomUUID?.() || Date.now() + Math.random(),
       file,
       name: file.name,
       size: file.size,
-      preview: URL.createObjectURL(file),
+      preview,
       status: 'pending',
       progress: 0,
       convertedBlob: null,
       convertedSize: null,
       convertedPreview: null,
       resizeSettings: { enabled: false, maxWidth: 2048, maxHeight: 2048 },
+      videoSettings: { resolution: 'default', crf: 28, fps: 'default', audioEnabled: true },
+      isVideo,
     };
   }
 

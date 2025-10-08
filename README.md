@@ -1,6 +1,6 @@
-# 🖼️ WebP Image Converter
+# 🎬 WebP & WebM Media Converter
 
-> A modern, fast, and secure SaaS image converter that transforms your images into the WebP format directly in your browser.
+> A modern, fast, and secure SaaS media converter that transforms your images to WebP and videos to WebM format directly in your browser.
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -8,23 +8,33 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-![WebP Image Converter Screenshot](./public/screenshots/app-demo.webp)
+![WebP & WebM Media Converter Screenshot](./public/screenshots/app-demo.webp)
 
 ## 🌐 Try It Now
 
 **Use the live application:** [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/)
 
-> **Note:** This is a proprietary SaaS application. The source code is available for viewing and contributing only. Please use the official web application above for all conversions.
+> **Note:** This is a proprietary SaaS application. The source code is available for viewing and contributing only. Please use the official web application above for all media conversions.
 
 ## ✨ Features
 
+### 🖼️ **Image Conversion (WebP)**
 - 🚀 **Lightning Fast**: Client-side processing with HTML5 Canvas API
-- 🖼️ **Smart Resizing**: Automatically resize images while maintaining aspect ratio
 - 🎨 **Transparency Support**: Preserves alpha channels for PNG files
-- 📦 **Batch Processing**: Convert multiple images simultaneously
-- 💾 **Smart Downloads**: Auto-generates ZIP files for multiple conversions
 - 🎯 **Quality Control**: Adjustable compression (10-100%)
+- 📏 **Smart Resizing**: Automatically resize images while maintaining aspect ratio
 - 📏 **Dimension Control**: Global and per-image resize settings with 2048px defaults
+
+### 🎬 **Video Conversion (WebM)**
+- 🎥 **Format Support**: Convert MP4, AVI, MOV, WMV to WebM
+- 🎚️ **Bitrate Control**: Adjustable video quality (100-10000 kbps)
+- 🔊 **Audio Options**: Include or exclude audio tracks
+- 🖼️ **Video Thumbnails**: Automatic thumbnail generation for preview
+- ⚡ **Browser-based**: Uses MediaRecorder API for efficient conversion
+
+### 🛠️ **Universal Features**
+- 📦 **Batch Processing**: Convert multiple files simultaneously
+- 💾 **Smart Downloads**: Auto-generates ZIP files for multiple conversions
 - 🔒 **Privacy First**: No server uploads - everything stays in your browser
 - 📱 **Responsive Design**: Works seamlessly on all devices
 - ⚡ **Modern Stack**: Built with React 19, TypeScript, and Vite
@@ -33,6 +43,7 @@
 
 ## 🎯 Supported Formats
 
+### 🖼️ **Images → WebP**
 | Input Formats | Output Format            |
 | ------------- | ------------------------ |
 | JPEG, JPG     | WebP                     |
@@ -41,10 +52,20 @@
 | BMP           | WebP                     |
 | TIFF          | WebP                     |
 
+### 🎬 **Videos → WebM**
+| Input Formats | Output Format | Max Size |
+| ------------- | ------------- | -------- |
+| MP4           | WebM          | 500MB    |
+| AVI           | WebM          | 500MB    |
+| MOV           | WebM          | 500MB    |
+| WMV           | WebM          | 500MB    |
+| 3GP           | WebM          | 500MB    |
+| OGV           | WebM          | 500MB    |
+
 ## 🚀 Using the Application
 
 ### For Users
-Simply visit [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/) to start converting your images to WebP format instantly.
+Simply visit [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/) to start converting your images to WebP and videos to WebM format instantly.
 
 ### For Contributors
 This repository is open for contributions. You can:
@@ -55,7 +76,9 @@ This repository is open for contributions. You can:
 
 **Note:** This source code is for contribution purposes only. Please do not attempt to deploy or host this application yourself.
 
-## 🖼️ Image Resizing
+## 🛠️ Conversion Settings
+
+### 🖼️ **Image Resizing**
 
 The converter includes intelligent image resizing to help reduce file sizes while maintaining quality:
 
@@ -70,11 +93,31 @@ The converter includes intelligent image resizing to help reduce file sizes whil
 - **Flexible Settings**: Each image can have different resize settings
 - **Visual Feedback**: See original → final dimensions before conversion
 
-### **How It Works**
+### **How Image Resizing Works**
 1. **Upload images** → Automatically resized to global settings (2048px default)
 2. **Adjust global settings** → Changes apply to all images without individual overrides
 3. **Enable individual resize** → Check the box to set custom dimensions for specific images
 4. **Apply to All** → Reset all images to use current global settings
+
+### 🎬 **Video Conversion Settings**
+
+Configure video output quality and audio options:
+
+### **Bitrate Control**
+- **Range**: 100-10000 kbps
+- **Default**: 1000 kbps (recommended for web)
+- **Higher bitrate** = better quality but larger file size
+
+### **Audio Options**
+- **Include Audio**: Toggle to include/exclude audio tracks
+- **Default**: Audio enabled
+- **Note**: Audio inclusion depends on browser support and source video
+
+### **How Video Conversion Works**
+1. **Upload videos** → Automatic thumbnail generation for preview
+2. **Adjust global settings** → Apply to all videos without individual overrides
+3. **Individual settings** → Customize bitrate and audio per video (future feature)
+4. **Convert** → Browser-based WebM encoding using MediaRecorder API
 
 
 ## 📦 Development Commands (Contributors Only)
@@ -94,16 +137,19 @@ The converter includes intelligent image resizing to help reduce file sizes whil
 ## 🛡️ Security Features
 
 - **Content Security Policy**: Prevents XSS attacks
-- **File Size Validation**: 50MB maximum file size
+- **File Size Validation**:
+  - Images: 50MB maximum file size
+  - Videos: 500MB maximum file size
 - **Dimension Limits**: 16,384px maximum width/height for input images
 - **Resize Validation**: Smart bounds checking for custom resize dimensions
 - **Input Sanitization**: Secure filename handling
+- **Format Validation**: Strict file type checking for images and videos
 - **Client-Side Only**: No data ever leaves your browser
 
 ## 🏗️ Project Structure
 
 ```
-webp-image-converter/
+webp-webm-media-converter/
 ├── public/
 │   ├── favicon.png
 │   └── ...
@@ -131,7 +177,8 @@ webp-image-converter/
 │   │   ├── useDragAndDrop.ts # Drag & drop handling
 │   │   └── index.ts        # Hooks exports
 │   ├── services/           # Business logic services
-│   │   └── conversionService.ts # Pure conversion functions
+│   │   ├── conversionService.ts # Image conversion functions
+│   │   └── videoConversionService.ts # Video conversion functions
 │   ├── utils/              # Utility functions
 │   │   └── zipUtils.ts     # ZIP file creation
 │   ├── types.ts            # TypeScript definitions
@@ -237,19 +284,25 @@ Found a bug or have a feature idea? Please [open an issue](https://github.com/yo
 - **Processing Speed**: Depends on image size and device capabilities
 - **Memory Usage**: Optimized with proper cleanup
 
-## 🌟 Why WebP + Resizing?
+## 🌟 Why WebP & WebM?
 
-**WebP Format Benefits:**
+### **WebP Format Benefits (Images):**
 - **25-50% smaller** file sizes compared to JPEG/PNG
 - **Better compression** with similar quality
 - **Transparency support** like PNG
 - **Wide browser support** (96%+ global coverage)
 
-**Smart Resizing Benefits:**
-- **Automatic optimization** for web use with 2048px defaults
-- **Significant file size reduction** for large photos (4K+ images)
-- **Maintained quality** through aspect ratio preservation
-- **Flexible control** with global and per-image settings
+### **WebM Format Benefits (Videos):**
+- **30-50% smaller** file sizes compared to MP4
+- **Open-source codec** (VP8/VP9) with no licensing fees
+- **Excellent web compatibility** designed for streaming
+- **Superior compression** while maintaining visual quality
+
+### **Smart Processing Benefits:**
+- **Automatic optimization** for web use with sensible defaults
+- **Significant file size reduction** for large media files
+- **Maintained quality** through intelligent encoding
+- **Flexible control** with global and per-file settings
 - **Faster loading** websites and applications
 
 ## ❤️ Acknowledgments

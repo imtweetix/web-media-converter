@@ -9,8 +9,10 @@ export function useDownload() {
   const downloadFile = useCallback((file: FileItem): void => {
     if (!file.convertedBlob) return;
 
+    // Use correct extension based on file type
+    const extension = file.isVideo ? '.webm' : '.webp';
     const filename = ConversionService.sanitizeFilename(
-      file.name.replace(/\.[^/.]+$/, '.webp')
+      file.name.replace(/\.[^/.]+$/, extension)
     );
     downloadBlob(file.convertedBlob, filename);
   }, []);
@@ -40,7 +42,7 @@ export function useDownload() {
 
       try {
         const zipBlob = await createZipWithBrowserAPIs(convertedFiles);
-        const filename = `webp-images-${new Date().toISOString().slice(0, 10)}.zip`;
+        const filename = `converted-files-${new Date().toISOString().slice(0, 10)}.zip`;
         downloadBlob(zipBlob, filename);
       } catch (error) {
         const errorMessage =

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ResizeSettings } from './types';
+import { ResizeSettings, VideoSettings } from './types';
 import {
   useFileManager,
   useConversion,
@@ -22,6 +22,13 @@ function App() {
       maxWidth: 2048,
       maxHeight: 2048,
     });
+  const [globalVideoSettings, setGlobalVideoSettings] =
+    useState<VideoSettings>({
+      resolution: 'default',
+      crf: 28,
+      fps: 'default',
+      audioEnabled: true,
+    });
 
   const {
     files,
@@ -30,6 +37,7 @@ function App() {
     clearAllFiles,
     updateFile,
     updateFileResizeSettings,
+    updateFileVideoSettings,
     applyGlobalResizeToAll,
   } = useFileManager();
 
@@ -44,8 +52,8 @@ function App() {
   );
 
   const handleConvertAll = useCallback(() => {
-    convertAllFiles(files, quality, globalResizeSettings, updateFile);
-  }, [convertAllFiles, files, quality, globalResizeSettings, updateFile]);
+    convertAllFiles(files, quality, globalResizeSettings, globalVideoSettings, updateFile);
+  }, [convertAllFiles, files, quality, globalResizeSettings, globalVideoSettings, updateFile]);
 
   const handleDownloadAll = useCallback(() => {
     downloadAll(files);
@@ -54,6 +62,27 @@ function App() {
   const handleApplyGlobalResize = useCallback(() => {
     applyGlobalResizeToAll(globalResizeSettings);
   }, [applyGlobalResizeToAll, globalResizeSettings]);
+
+  const handleApplyGlobalImageSettings = useCallback(() => {
+    // Apply both global quality and resize settings to all images
+    files.forEach(file => {
+      if (!file.isVideo) {
+        updateFile(file.id, {
+          quality: quality,
+          resizeSettings: { ...globalResizeSettings, enabled: false } // Reset individual settings
+        });
+      }
+    });
+  }, [files, quality, globalResizeSettings, updateFile]);
+
+  const handleApplyGlobalVideo = useCallback(() => {
+    // Apply global video settings to all video files and reset individual settings
+    files.forEach(file => {
+      if (file.isVideo) {
+        updateFileVideoSettings(file.id, { ...globalVideoSettings, enabled: false });
+      }
+    });
+  }, [files, globalVideoSettings, updateFileVideoSettings]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -64,11 +93,16 @@ function App() {
 
         {files.length > 0 && (
           <ConversionSettings
+            files={files}
             quality={quality}
             onQualityChange={setQuality}
             globalResizeSettings={globalResizeSettings}
             onGlobalResizeChange={handleGlobalResizeChange}
+            globalVideoSettings={globalVideoSettings}
+            onGlobalVideoChange={setGlobalVideoSettings}
             onApplyGlobalResizeToAll={handleApplyGlobalResize}
+            onApplyGlobalImageSettingsToAll={handleApplyGlobalImageSettings}
+            onApplyGlobalVideoToAll={handleApplyGlobalVideo}
           />
         )}
 
@@ -84,6 +118,8 @@ function App() {
             onRemoveFile={removeFile}
             onDownloadFile={downloadFile}
             onUpdateResizeSettings={updateFileResizeSettings}
+            onUpdateVideoSettings={updateFileVideoSettings}
+            onUpdateFile={updateFile}
           />
         )}
 

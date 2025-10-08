@@ -1,24 +1,36 @@
 import { useState, useCallback, useEffect } from 'react';
-import { FileItem, ResizeSettings } from '../types';
+import { FileItem, ResizeSettings, VideoSettings } from '../types';
 import { ConversionService } from '../services/conversionService';
 
 export function useFileManager() {
   const [files, setFiles] = useState<FileItem[]>([]);
 
-  const addFiles = useCallback((newFiles: File[]): void => {
+  const addFiles = useCallback(async (newFiles: File[]): Promise<void> => {
     const validFiles: FileItem[] = [];
     const errors: string[] = [];
 
-    newFiles.forEach((file) => {
+    for (const file of newFiles) {
       const validation = ConversionService.validateFile(file);
       if (validation.isValid) {
-        validFiles.push(ConversionService.createFileItem(file));
+        try {
+          const fileItem = await ConversionService.createFileItem(file);
+          validFiles.push(fileItem);
+
+          // Log warning for debugging, but don't show intrusive dialogs
+          if (validation.warning) {
+            console.warn(validation.warning);
+            // The file is added anyway - we'll show any issues during conversion
+          }
+        } catch (error) {
+          console.warn('Error creating file item:', error);
+          errors.push(`Failed to process file: ${file.name}`);
+        }
       } else if (validation.error) {
         errors.push(validation.error);
         console.warn(validation.error);
-        alert(validation.error);
+        // Don't show alert - just log and add to errors array for potential future display
       }
-    });
+    }
 
     if (validFiles.length > 0) {
       setFiles(prev => [...prev, ...validFiles]);
@@ -63,6 +75,13 @@ export function useFileManager() {
     [updateFile]
   );
 
+  const updateFileVideoSettings = useCallback(
+    (fileId: string | number, videoSettings: VideoSettings) => {
+      updateFile(fileId, { videoSettings });
+    },
+    [updateFile]
+  );
+
   const applyGlobalResizeToAll = useCallback((globalResizeSettings: ResizeSettings) => {
     setFiles(prev =>
       prev.map(f => ({ ...f, resizeSettings: { ...globalResizeSettings } }))
@@ -90,6 +109,7 @@ export function useFileManager() {
     clearAllFiles,
     updateFile,
     updateFileResizeSettings,
+    updateFileVideoSettings,
     applyGlobalResizeToAll,
   };
 }
