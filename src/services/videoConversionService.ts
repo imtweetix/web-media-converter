@@ -291,10 +291,10 @@ export class VideoConversionService {
             try {
               // Try different methods for audio capture
               let videoStream = null;
-              if (video.captureStream) {
-                videoStream = video.captureStream();
-              } else if (video.mozCaptureStream) {
-                videoStream = video.mozCaptureStream();
+              if ((video as any).captureStream) {
+                videoStream = (video as any).captureStream();
+              } else if ((video as any).mozCaptureStream) {
+                videoStream = (video as any).mozCaptureStream();
               }
 
               if (videoStream) {
@@ -517,7 +517,6 @@ export class VideoConversionService {
     const problematicFormats = ['video/x-ms-wmv', 'video/x-ms-asf'];
 
     const fileName = file.name.toLowerCase();
-    const fileExtension = fileName.split('.').pop();
 
     // Check if it's a video file
     if (!isVideo && !fileName.match(/\.(mp4|webm|ogg|mov|3gp)$/)) {
@@ -661,7 +660,6 @@ export class VideoConversionService {
     ctx.fillStyle = '#374151';
     ctx.font = '16px system-ui, -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    const maxWidth = canvas.width - 40;
     const shortName =
       fileName.length > 50 ? fileName.substring(0, 47) + '...' : fileName;
     ctx.fillText(shortName, canvas.width / 2, canvas.height - 30);
