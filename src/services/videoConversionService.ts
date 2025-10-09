@@ -2,7 +2,10 @@ import { FileItem, VideoSettings, ProgressCallback } from '../types';
 
 export class VideoConversionService {
   // Helper function to convert CRF to approximate bitrate
-  private static crfToBitrate(crf: number, resolution: { width: number; height: number }): number {
+  private static crfToBitrate(
+    crf: number,
+    resolution: { width: number; height: number }
+  ): number {
     // More conservative bitrate calculation for smaller file sizes
     // Lower CRF = higher quality = higher bitrate
     const pixelCount = resolution.width * resolution.height;
@@ -44,7 +47,7 @@ export class VideoConversionService {
       if (videoSettings.customWidth && videoSettings.customHeight) {
         return {
           width: videoSettings.customWidth,
-          height: videoSettings.customHeight
+          height: videoSettings.customHeight,
         };
       }
       // Fallback to original if custom values are not provided
@@ -62,20 +65,20 @@ export class VideoConversionService {
       // Original is wider, limit by width
       return {
         width,
-        height: Math.round(width / originalAspectRatio)
+        height: Math.round(width / originalAspectRatio),
       };
     } else {
       // Original is taller, limit by height
       return {
         width: Math.round(height * originalAspectRatio),
-        height
+        height,
       };
     }
   }
 
   // Helper function to detect video FPS
   private static detectVideoFPS(video: HTMLVideoElement): Promise<number> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       let lastTimestamp = 0;
       let frameCount = 0;
       let measurementStarted = false;
@@ -91,7 +94,8 @@ export class VideoConversionService {
         }
 
         // Check if enough time has passed to get a stable FPS value
-        if (now - lastTimestamp > 1000) { // 1 second of measurement
+        if (now - lastTimestamp > 1000) {
+          // 1 second of measurement
           const fps = frameCount / ((now - lastTimestamp) / 1000);
           detectionComplete = true;
 
@@ -99,7 +103,9 @@ export class VideoConversionService {
           let detectedFps = Math.round(fps);
 
           // Snap to common frame rates if close
-          const commonFrameRates = [12, 15, 23.976, 24, 25, 29.97, 30, 48, 50, 59.94, 60];
+          const commonFrameRates = [
+            12, 15, 23.976, 24, 25, 29.97, 30, 48, 50, 59.94, 60,
+          ];
           for (const commonFps of commonFrameRates) {
             if (Math.abs(fps - commonFps) < 1) {
               detectedFps = Math.round(commonFps);
@@ -136,16 +142,19 @@ export class VideoConversionService {
       // Start FPS detection
       const startDetection = () => {
         video.currentTime = Math.min(1, video.duration / 4); // Start from 1 second or 25% through video
-        video.play().then(() => {
-          if ('requestVideoFrameCallback' in video) {
-            video.requestVideoFrameCallback(updateFps);
-          } else {
-            updateFps(performance.now());
-          }
-        }).catch(() => {
-          // If play fails, return default FPS
-          resolve(24);
-        });
+        video
+          .play()
+          .then(() => {
+            if ('requestVideoFrameCallback' in video) {
+              video.requestVideoFrameCallback(updateFps);
+            } else {
+              updateFps(performance.now());
+            }
+          })
+          .catch(() => {
+            // If play fails, return default FPS
+            resolve(24);
+          });
       };
 
       // Wait for video to be ready
@@ -184,14 +193,18 @@ export class VideoConversionService {
 
           // Ensure video is actually playable
           if (video.videoWidth === 0 || video.videoHeight === 0) {
-            reject(new Error(`Cannot process ${file.name}. The video format may not be supported or the file may be corrupted.`));
+            reject(
+              new Error(
+                `Cannot process ${file.name}. The video format may not be supported or the file may be corrupted.`
+              )
+            );
             return;
           }
 
           // Get video dimensions and duration
           const originalDimensions = {
             width: video.videoWidth,
-            height: video.videoHeight
+            height: video.videoHeight,
           };
           const duration = video.duration;
 
@@ -205,7 +218,7 @@ export class VideoConversionService {
           updateFile(file.id, {
             originalDimensions,
             finalDimensions,
-            duration
+            duration,
           });
 
           updateProgress(30);
@@ -227,7 +240,11 @@ export class VideoConversionService {
           }
 
           if (!isSupported) {
-            reject(new Error('WebM video encoding not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.'));
+            reject(
+              new Error(
+                'WebM video encoding not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.'
+              )
+            );
             return;
           }
 
@@ -287,7 +304,10 @@ export class VideoConversionService {
                 }
               }
             } catch (audioError) {
-              console.warn('Audio capture not available, continuing without audio:', audioError);
+              console.warn(
+                'Audio capture not available, continuing without audio:',
+                audioError
+              );
             }
           }
 
@@ -296,12 +316,12 @@ export class VideoConversionService {
 
           const mediaRecorder = new MediaRecorder(stream, {
             mimeType: mimeType,
-            videoBitsPerSecond: bitrate
+            videoBitsPerSecond: bitrate,
           });
 
           const chunks: Blob[] = [];
 
-          mediaRecorder.ondataavailable = (event) => {
+          mediaRecorder.ondataavailable = event => {
             if (event.data.size > 0) {
               chunks.push(event.data);
             }
@@ -321,7 +341,7 @@ export class VideoConversionService {
             resolve(webmBlob);
           };
 
-          mediaRecorder.onerror = (event) => {
+          mediaRecorder.onerror = event => {
             // Clean up blob URL on error
             setTimeout(() => {
               if ((video as any)._cleanup) {
@@ -344,16 +364,23 @@ export class VideoConversionService {
           let stuckCount = 0;
 
           // Add timeout to prevent infinite hanging
-          const conversionTimeout = setTimeout(() => {
-            if (isRecording) {
-              console.warn('Video conversion timed out, stopping recording');
-              isRecording = false;
-              mediaRecorder.stop();
-            }
-          }, Math.max(30000, duration * 1000 * 2)); // 30 seconds minimum, or 2x video duration
+          const conversionTimeout = setTimeout(
+            () => {
+              if (isRecording) {
+                console.warn('Video conversion timed out, stopping recording');
+                isRecording = false;
+                mediaRecorder.stop();
+              }
+            },
+            Math.max(30000, duration * 1000 * 2)
+          ); // 30 seconds minimum, or 2x video duration
 
           const drawFrame = () => {
-            if (!isRecording || video.ended || video.currentTime >= video.duration) {
+            if (
+              !isRecording ||
+              video.ended ||
+              video.currentTime >= video.duration
+            ) {
               if (isRecording) {
                 isRecording = false;
                 clearTimeout(conversionTimeout);
@@ -365,7 +392,8 @@ export class VideoConversionService {
             // Check if video is stuck (same time for too long)
             if (video.currentTime === lastTime) {
               stuckCount++;
-              if (stuckCount > 100) { // If stuck for 100 frames (~3 seconds at 30fps)
+              if (stuckCount > 100) {
+                // If stuck for 100 frames (~3 seconds at 30fps)
                 console.warn('Video appears stuck, forcing completion');
                 isRecording = false;
                 clearTimeout(conversionTimeout);
@@ -379,7 +407,13 @@ export class VideoConversionService {
             // Check if video element is still valid and has dimensions
             if (video.videoWidth > 0 && video.videoHeight > 0) {
               try {
-                ctx.drawImage(video, 0, 0, finalDimensions.width, finalDimensions.height);
+                ctx.drawImage(
+                  video,
+                  0,
+                  0,
+                  finalDimensions.width,
+                  finalDimensions.height
+                );
 
                 // Update progress based on video playback
                 const progress = 60 + (video.currentTime / video.duration) * 35;
@@ -398,14 +432,16 @@ export class VideoConversionService {
           };
 
           // Start playback and frame drawing
-          video.play().then(() => {
-            drawFrame();
-          }).catch((playError) => {
-            console.warn('Video play failed:', playError);
-            // Start drawing anyway in case it's a minor issue
-            drawFrame();
-          });
-
+          video
+            .play()
+            .then(() => {
+              drawFrame();
+            })
+            .catch(playError => {
+              console.warn('Video play failed:', playError);
+              // Start drawing anyway in case it's a minor issue
+              drawFrame();
+            });
         } catch (error) {
           reject(error);
         }
@@ -455,7 +491,11 @@ export class VideoConversionService {
     });
   }
 
-  static validateVideoFile(file: File): { isValid: boolean; error?: string; warning?: string } {
+  static validateVideoFile(file: File): {
+    isValid: boolean;
+    error?: string;
+    warning?: string;
+  } {
     const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB limit for videos
 
     if (file.size > MAX_FILE_SIZE) {
@@ -468,24 +508,13 @@ export class VideoConversionService {
     const isVideo = file.type.startsWith('video/');
 
     // Browser-native supported formats for video processing
-    const browserNativeFormats = [
-      'video/mp4',
-      'video/webm',
-      'video/ogg'
-    ];
+    const browserNativeFormats = ['video/mp4', 'video/webm', 'video/ogg'];
 
     // Additional formats we can attempt to process (may have limited browser support)
-    const additionalFormats = [
-      'video/mov',
-      'video/quicktime',
-      'video/3gpp'
-    ];
+    const additionalFormats = ['video/mov', 'video/quicktime', 'video/3gpp'];
 
     // Formats with known browser compatibility issues
-    const problematicFormats = [
-      'video/x-ms-wmv',
-      'video/x-ms-asf'
-    ];
+    const problematicFormats = ['video/x-ms-wmv', 'video/x-ms-asf'];
 
     const fileName = file.name.toLowerCase();
     const fileExtension = fileName.split('.').pop();
@@ -499,29 +528,34 @@ export class VideoConversionService {
     }
 
     // Check for potentially problematic formats but still allow them
-    const isProblematic = problematicFormats.some(format =>
-      file.type.toLowerCase() === format ||
-      fileName.endsWith('.wmv') ||
-      fileName.endsWith('.asf')
+    const isProblematic = problematicFormats.some(
+      format =>
+        file.type.toLowerCase() === format ||
+        fileName.endsWith('.wmv') ||
+        fileName.endsWith('.asf')
     );
 
     // We'll try to convert these files anyway - let the conversion process handle any issues
 
     // Check for browser-native support
-    const isNativelySupported = browserNativeFormats.some(format =>
-      file.type.toLowerCase() === format
+    const isNativelySupported = browserNativeFormats.some(
+      format => file.type.toLowerCase() === format
     );
 
-    const isAdditionalSupported = additionalFormats.some(format =>
-      file.type.toLowerCase() === format ||
-      fileName.endsWith('.' + format.split('/')[1].replace('x-', ''))
+    const isAdditionalSupported = additionalFormats.some(
+      format =>
+        file.type.toLowerCase() === format ||
+        fileName.endsWith('.' + format.split('/')[1].replace('x-', ''))
     );
 
     // Reject AVI and WMV files explicitly
-    if (fileName.endsWith('.avi') || fileName.endsWith('.wmv') ||
-        file.type.toLowerCase() === 'video/avi' ||
-        file.type.toLowerCase() === 'video/x-msvideo' ||
-        isProblematic) {
+    if (
+      fileName.endsWith('.avi') ||
+      fileName.endsWith('.wmv') ||
+      file.type.toLowerCase() === 'video/avi' ||
+      file.type.toLowerCase() === 'video/x-msvideo' ||
+      isProblematic
+    ) {
       return {
         isValid: false,
         error: `File "${file.name}" is not supported. For best results, please use MP4, WebM, MOV, or 3GP formats.`,
@@ -628,7 +662,8 @@ export class VideoConversionService {
     ctx.font = '16px system-ui, -apple-system, sans-serif';
     ctx.textAlign = 'center';
     const maxWidth = canvas.width - 40;
-    const shortName = fileName.length > 50 ? fileName.substring(0, 47) + '...' : fileName;
+    const shortName =
+      fileName.length > 50 ? fileName.substring(0, 47) + '...' : fileName;
     ctx.fillText(shortName, canvas.width / 2, canvas.height - 30);
 
     return canvas.toDataURL('image/jpeg', 0.8);

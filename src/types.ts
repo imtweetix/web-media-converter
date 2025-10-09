@@ -11,7 +11,15 @@ export interface VideoResolution {
 }
 
 export interface VideoSettings {
-  resolution: 'default' | 'custom' | '320x240' | '640x480' | '1280x720' | '1920x1080' | '2560x1440' | '3840x2160';
+  resolution:
+    | 'default'
+    | 'custom'
+    | '320x240'
+    | '640x480'
+    | '1280x720'
+    | '1920x1080'
+    | '2560x1440'
+    | '3840x2160';
   customWidth?: number;
   customHeight?: number;
   crf: number; // Constant Rate Factor (0-53)

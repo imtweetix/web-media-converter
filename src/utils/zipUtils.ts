@@ -33,7 +33,9 @@ export const createZipWithBrowserAPIs = async (
 
     // Use correct extension based on file type
     const extension = file.isVideo ? '.webm' : '.webp';
-    const fileName = sanitizeFilename(file.name.replace(/\.[^/.]+$/, extension));
+    const fileName = sanitizeFilename(
+      file.name.replace(/\.[^/.]+$/, extension)
+    );
     const fileNameBytes = new TextEncoder().encode(fileName);
     const fileData = new Uint8Array(await file.convertedBlob.arrayBuffer());
 

@@ -39,7 +39,8 @@ export function UploadArea({ onFilesSelected }: UploadAreaProps) {
         Drop images or videos here or click to upload
       </h3>
       <p className='text-gray-500 mb-4'>
-        Images: JPEG, PNG, GIF, BMP → WebP<br />
+        Images: JPEG, PNG, GIF, BMP → WebP
+        <br />
         Videos: MP4, MOV, 3GP → WebM
       </p>
       <Button onClick={() => fileInputRef.current?.click()} className='mx-auto'>

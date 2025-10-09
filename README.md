@@ -137,8 +137,7 @@ Configure video output quality and audio options:
 | `npm run type-check`    | Run TypeScript type checking       |
 | `npm run format`        | Format code with Prettier          |
 | `npm run format:check`  | Check code formatting              |
-| `npm run perf:audit`    | Lighthouse performance audit       |
-| `npm run perf:test`     | Complete performance testing       |
+| `npm run perf:preview`  | Build and preview for performance testing |
 
 > **Important:** These commands are for development and contribution purposes only. Do not use them to deploy or host this application.
 
@@ -336,8 +335,26 @@ This release includes a comprehensive performance overhaul that makes the conver
 ### 🛠️ **Developer Tools**
 - **Performance Monitoring**: Built-in tracking for all operations
 - **Bundle Analysis**: `npm run build:analyze` for bundle visualization
-- **Performance Auditing**: `npm run perf:audit` for Lighthouse metrics
+- **Performance Testing**: `npm run perf:preview` for browser-based performance analysis
 - **Memory Profiling**: Real-time memory usage monitoring
+
+### 🔍 **Performance Testing Instructions**
+For performance analysis, use browser-based tools:
+
+1. **Run the preview server:**
+   ```bash
+   npm run perf:preview
+   ```
+
+2. **Use Chrome DevTools:**
+   - Open your app in Chrome
+   - Press F12 → Lighthouse tab
+   - Run Performance audit
+
+3. **Online Tools:**
+   - [PageSpeed Insights](https://pagespeed.web.dev/)
+   - [GTmetrix](https://gtmetrix.com/)
+   - [WebPageTest](https://www.webpagetest.org/)
 
 ## 🌟 Why WebP & WebM?
 
