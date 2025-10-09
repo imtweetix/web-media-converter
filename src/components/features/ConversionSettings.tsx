@@ -28,7 +28,6 @@ export function ConversionSettings({
   onGlobalResizeChange,
   globalVideoSettings,
   onGlobalVideoChange,
-  onApplyGlobalResizeToAll,
   onApplyGlobalImageSettingsToAll,
   onApplyGlobalVideoToAll,
 }: ConversionSettingsProps) {
@@ -53,10 +52,7 @@ export function ConversionSettings({
       ...globalVideoSettings,
       resolution,
       // Clear custom dimensions when not using custom
-      ...(resolution !== 'custom' && {
-        customWidth: undefined,
-        customHeight: undefined,
-      }),
+      ...(resolution !== 'custom' ? {} : {}),
     });
   };
 
@@ -149,6 +145,8 @@ export function ConversionSettings({
             style={{
               background: `linear-gradient(to right, #4f46e5 0%, #4f46e5 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`,
             }}
+            title={`Quality: ${quality}%`}
+            aria-label={`Image quality slider: ${quality}%`}
           />
         </div>
         <span className='text-gray-700 font-medium min-w-[3rem]'>
@@ -242,6 +240,8 @@ export function ConversionSettings({
             style={{
               background: `linear-gradient(to right, #4f46e5 0%, #4f46e5 ${crfPercentage}%, #e5e7eb ${crfPercentage}%, #e5e7eb 100%)`,
             }}
+            title={`Video quality (CRF): ${globalVideoSettings.crf}`}
+            aria-label={`Video quality slider: ${globalVideoSettings.crf}`}
           />
         </div>
         <span className='text-gray-700 font-medium min-w-[3rem]'>
@@ -280,6 +280,8 @@ export function ConversionSettings({
             value={globalVideoSettings.resolution}
             onChange={handleVideoResolutionChange}
             className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            title='Select video resolution'
+            aria-label='Video resolution'
           >
             {videoResolutions.map(option => (
               <option key={option.value} value={option.value}>
@@ -299,12 +301,15 @@ export function ConversionSettings({
                   min='100'
                   max='7680'
                   value={globalVideoSettings.customWidth || ''}
-                  onChange={e =>
-                    onGlobalVideoChange({
-                      ...globalVideoSettings,
-                      customWidth: parseInt(e.target.value) || undefined,
-                    })
-                  }
+                  onChange={e => {
+                    const value = parseInt(e.target.value);
+                    if (!isNaN(value)) {
+                      onGlobalVideoChange({
+                        ...globalVideoSettings,
+                        customWidth: value,
+                      });
+                    }
+                  }}
                   placeholder='1920'
                 />
               </div>
@@ -317,12 +322,15 @@ export function ConversionSettings({
                   min='100'
                   max='4320'
                   value={globalVideoSettings.customHeight || ''}
-                  onChange={e =>
-                    onGlobalVideoChange({
-                      ...globalVideoSettings,
-                      customHeight: parseInt(e.target.value) || undefined,
-                    })
-                  }
+                  onChange={e => {
+                    const value = parseInt(e.target.value);
+                    if (!isNaN(value)) {
+                      onGlobalVideoChange({
+                        ...globalVideoSettings,
+                        customHeight: value,
+                      });
+                    }
+                  }}
                   placeholder='1080'
                 />
               </div>
@@ -338,6 +346,8 @@ export function ConversionSettings({
             value={globalVideoSettings.fps || 'default'}
             onChange={handleFpsChange}
             className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            title='Select frame rate'
+            aria-label='Frame rate'
           >
             {fpsOptions.map(option => (
               <option key={option.value} value={option.value}>

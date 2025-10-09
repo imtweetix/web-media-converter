@@ -1,7 +1,7 @@
 {
   "name": "webp-image-converter",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "engines": {
     "node": ">=18.0.0",
@@ -12,10 +12,14 @@
     "build": "vite build",
     "build:check": "npm run type-check && vite build",
     "build:netlify": "npm ci --legacy-peer-deps && npm run build",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist",
+    "build:profile": "vite build --mode production --profile",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "perf:audit": "npm run build && npx lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html",
+    "perf:test": "npm run build && npm run preview & sleep 5 && npm run perf:audit && pkill -f 'vite preview'"
   },
   "dependencies": {
     "@awesome.me/kit-26a4d59a75": "^1.0.25",

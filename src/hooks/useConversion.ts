@@ -1,7 +1,30 @@
-import { useState, useCallback } from 'react';
-import { FileItem, ProgressCallback, ResizeSettings, VideoSettings } from '../types';
+import { useCallback, useState } from 'react';
 import { ConversionService } from '../services/conversionService';
 import { VideoConversionService } from '../services/videoConversionService';
+import {
+  FileItem,
+  ProgressCallback,
+  ResizeSettings,
+  VideoSettings,
+} from '../types';
+
+// Retry mechanism for failed conversions
+const convertWithRetry = async (
+  convertFn: () => Promise<Blob>,
+  maxRetries: number = 2
+): Promise<Blob> => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await convertFn();
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      // Exponential backoff
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      console.log(`Retry attempt ${attempt} for conversion`);
+    }
+  }
+  throw new Error('Max retries exceeded');
+};
 
 export function useConversion() {
   const [isConverting, setIsConverting] = useState<boolean>(false);
@@ -17,74 +40,94 @@ export function useConversion() {
       setIsConverting(true);
 
       const filesToConvert = files.filter(f => f.status === 'pending');
+      const CONCURRENT_LIMIT = Math.min(3, filesToConvert.length); // Process up to 3 files simultaneously
 
       // Update status to converting for all pending files
       filesToConvert.forEach(file => {
         updateFile(file.id, { progress: 0, status: 'converting' });
       });
 
-      for (const file of filesToConvert) {
-        try {
-          const updateProgress: ProgressCallback = (progress: number) => {
-            updateFile(file.id, { progress, status: 'converting' });
-          };
+      // Process files in parallel batches
+      const processBatch = async (batch: FileItem[]) => {
+        return Promise.all(
+          batch.map(async file => {
+            try {
+              const updateProgress: ProgressCallback = (progress: number) => {
+                updateFile(file.id, { progress, status: 'converting' });
+              };
 
-          let convertedBlob: Blob;
+              const convertFn = async () => {
+                if (file.isVideo) {
+                  // Use video conversion
+                  const effectiveVideoSettings = file.videoSettings?.enabled
+                    ? file.videoSettings
+                    : globalVideoSettings;
+                  return await VideoConversionService.convertToWebM(
+                    file,
+                    effectiveVideoSettings,
+                    updateProgress,
+                    updateFile
+                  );
+                } else {
+                  // Use image conversion with individual quality if set, otherwise global
+                  const effectiveQuality =
+                    file.quality !== undefined ? file.quality : quality;
+                  return await ConversionService.convertToWebP(
+                    file,
+                    effectiveQuality,
+                    globalResizeSettings,
+                    updateProgress,
+                    updateFile
+                  );
+                }
+              };
 
-          if (file.isVideo) {
-            // Use video conversion
-            // Use individual settings only if explicitly enabled, otherwise use global settings
-            const effectiveVideoSettings = (file.videoSettings?.enabled)
-              ? file.videoSettings
-              : globalVideoSettings;
-            convertedBlob = await VideoConversionService.convertToWebM(
-              file,
-              effectiveVideoSettings,
-              updateProgress,
-              updateFile
-            );
-          } else {
-            // Use image conversion with individual quality if set, otherwise global
-            const effectiveQuality = file.quality !== undefined ? file.quality : quality;
-            convertedBlob = await ConversionService.convertToWebP(
-              file,
-              effectiveQuality,
-              globalResizeSettings,
-              updateProgress,
-              updateFile
-            );
-          }
+              const convertedBlob = await convertWithRetry(convertFn);
 
-          if (convertedBlob) {
-            // For videos, don't create a preview from the blob since it's a video file
-            // The FileItem component will show a placeholder for videos
-            const convertedPreview = file.isVideo ? null : URL.createObjectURL(convertedBlob);
+              if (convertedBlob) {
+                // For videos, don't create a preview from the blob since it's a video file
+                const convertedPreview = file.isVideo
+                  ? null
+                  : URL.createObjectURL(convertedBlob);
 
-            updateFile(file.id, {
-              status: 'converted',
-              progress: 100,
-              convertedBlob,
-              convertedSize: convertedBlob.size,
-              convertedPreview,
-            });
-          } else {
-            updateFile(file.id, { status: 'error', progress: 0 });
-          }
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Unknown error';
-          console.error('Conversion error for file:', file.name, errorMessage);
+                updateFile(file.id, {
+                  status: 'converted',
+                  progress: 100,
+                  convertedBlob,
+                  convertedSize: convertedBlob.size,
+                  convertedPreview,
+                });
+              } else {
+                updateFile(file.id, { status: 'error', progress: 0 });
+              }
+            } catch (error) {
+              const errorMessage =
+                error instanceof Error ? error.message : 'Unknown error';
+              console.error(
+                'Conversion error for file:',
+                file.name,
+                errorMessage
+              );
 
-          // Set error message in the file object for display
-          updateFile(file.id, {
-            status: 'error',
-            progress: 0,
-            errorMessage: errorMessage
-          });
+              updateFile(file.id, {
+                status: 'error',
+                progress: 0,
+                errorMessage: errorMessage,
+              });
+            }
+          })
+        );
+      };
+
+      // Process files in batches to control concurrency
+      for (let i = 0; i < filesToConvert.length; i += CONCURRENT_LIMIT) {
+        const batch = filesToConvert.slice(i, i + CONCURRENT_LIMIT);
+        await processBatch(batch);
+
+        // Small delay between batches to prevent overwhelming the browser
+        if (i + CONCURRENT_LIMIT < filesToConvert.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
-
-        // Small delay between conversions
-        await new Promise(resolve => setTimeout(resolve, 150));
       }
 
       setIsConverting(false);
