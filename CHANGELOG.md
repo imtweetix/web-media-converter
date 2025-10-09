@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2025-01-09
+
+### 🔧 **PROJECT REBRANDING & MAINTENANCE**
+
+This release focuses on project rebranding, code quality improvements, and maintenance updates.
+
+### Changed
+- 🏷️ **Project Rebranding**: Renamed from "WebP Image Converter" to "Web Media Converter"
+- 📦 **Repository Name**: Updated GitHub repository name to `web-media-converter`
+- 🌐 **URLs Updated**: All documentation and references updated to new Netlify URL
+- 📝 **Documentation**: Comprehensive updates across README, LICENSE, and HTML meta tags
+
+### Fixed
+- 🧹 **Code Quality**: Resolved all TypeScript linting warnings and errors
+- 🚫 **Unused Imports**: Removed unused FontAwesome import in FilesList component
+- 🔧 **Type Safety**: Added proper type assertions for HTMLVideoElement methods
+- 📦 **Dependencies**: Removed problematic Lighthouse dependencies
+
+### Improved
+- 🛠️ **Performance Testing**: Replaced Lighthouse with browser-based performance testing
+- 📊 **Testing Workflow**: New `perf:preview` script for manual performance analysis
+- 📚 **Documentation**: Enhanced performance testing instructions with multiple tools
+- 🎯 **Build Process**: Maintained all existing optimizations and bundle efficiency
+
+### Technical Details
+- **Bundle Size**: Maintained ~55KB gzipped with optimized chunking
+- **Build Time**: Consistent ~2.5-3s build performance
+- **Type Safety**: Full TypeScript strict mode compliance
+- **Code Formatting**: 100% Prettier compliance across all files
+
 ## [2.2.0] - 2025-01-09
 
 ### 🚀 **MAJOR PERFORMANCE OVERHAUL**
