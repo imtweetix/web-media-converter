@@ -5,7 +5,7 @@ export function Footer() {
     <footer className='mt-12 py-5 rounded-xl shadow-sm border-t border-gray-200 bg-white/50'>
       <div className='text-center text-sm text-gray-600'>
         <p className='mb-2'>
-          © {currentYear} WebP Image Converter. All rights reserved.
+          © {currentYear} Web Media Converter. All rights reserved.
         </p>
         <p>
           Made with ❤️ by{' '}

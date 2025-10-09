@@ -1,4 +1,4 @@
-# 🎬 WebP & WebM Media Converter
+# 🎬 Web Media Converter
 
 > A modern, fast, and secure SaaS media converter that transforms your images to WebP and videos to WebM format directly in your browser.
 
@@ -8,11 +8,11 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-![WebP & WebM Media Converter Screenshot](./public/screenshots/app-demo.webp)
+![Web Media Converter Screenshot](./public/screenshots/app-demo.webp)
 
 ## 🌐 Try It Now
 
-**Use the live application:** [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/)
+**Use the live application:** [https://webmediaconverter.netlify.app/](https://webmediaconverter.netlify.app/)
 
 > **Note:** This is a proprietary SaaS application. The source code is available for viewing and contributing only. Please use the official web application above for all media conversions.
 
@@ -69,7 +69,7 @@
 ## 🚀 Using the Application
 
 ### For Users
-Simply visit [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/) to start converting your images to WebP and videos to WebM format instantly.
+Simply visit [https://webmediaconverter.netlify.app/](https://webmediaconverter.netlify.app/) to start converting your images to WebP and videos to WebM format instantly.
 
 ### For Contributors
 This repository is open for contributions. You can:
@@ -157,7 +157,7 @@ Configure video output quality and audio options:
 ## 🏗️ Project Structure
 
 ```
-webp-webm-media-converter/
+web-media-converter/
 ├── public/
 │   ├── favicon.png
 │   └── ...
@@ -224,12 +224,12 @@ webp-webm-media-converter/
 We welcome contributions to improve this SaaS application! You can help by:
 
 ### 🐛 Reporting Issues
-- [Open an issue](https://github.com/yourusername/webp-image-converter/issues/new) for bugs
+- [Open an issue](https://github.com/yourusername/web-media-converter/issues/new) for bugs
 - Provide detailed steps to reproduce
 - Include screenshots if applicable
 
 ### 💡 Suggesting Features
-- [Request a feature](https://github.com/yourusername/webp-image-converter/issues/new) with a clear use case
+- [Request a feature](https://github.com/yourusername/web-media-converter/issues/new) with a clear use case
 - Explain the problem it solves
 - Describe your proposed solution
 
@@ -271,19 +271,19 @@ This project is licensed under a **Proprietary License** - see the [LICENSE](LIC
 **Key Points:**
 - ✅ View source code for educational purposes
 - ✅ Contribute improvements and suggestions
-- ✅ Use the official web app at [https://image-2-webp.netlify.app/](https://image-2-webp.netlify.app/)
+- ✅ Use the official web app at [https://webmediaconverter.netlify.app/](https://webmediaconverter.netlify.app/)
 - ❌ Deploy, host, or distribute this software
 - ❌ Use for commercial purposes without permission
 - ❌ Create derivative works
 
 ## 🐛 Bug Reports & Feature Requests
 
-Found a bug or have a feature idea? Please [open an issue](https://github.com/yourusername/webp-image-converter/issues) with:
+Found a bug or have a feature idea? Please [open an issue](https://github.com/yourusername/web-media-converter/issues) with:
 
 - **Bug Reports**: Steps to reproduce, expected behavior, screenshots
 - **Feature Requests**: Use case, proposed solution, mockups (if applicable)
 
-**For Support:** Use the [GitHub Issues](https://github.com/yourusername/webp-image-converter/issues) for all bug reports, feature requests, and general inquiries.
+**For Support:** Use the [GitHub Issues](https://github.com/yourusername/web-media-converter/issues) for all bug reports, feature requests, and general inquiries.
 
 ## 📊 Performance
 
