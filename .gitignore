@@ -24,6 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 GITHUB_CHECKLIST.md
+CLAUDE.md
 
 # Environment
 .env

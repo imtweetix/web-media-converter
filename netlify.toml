@@ -17,7 +17,7 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; object-src 'none'; frame-ancestors 'none';"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' blob: data:; media-src 'self' blob: data:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
 
 [[headers]]
