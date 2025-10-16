@@ -82,7 +82,7 @@ export default defineConfig({
     host: true,
     headers: {
       'Content-Security-Policy':
-        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; object-src 'none'; base-uri 'self';",
+        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' data: blob: https://www.google-analytics.com; media-src 'self' data: blob:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com https://www.google-analytics.com https://analytics.google.com; object-src 'none'; base-uri 'self';",
     },
   },
   preview: {

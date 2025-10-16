@@ -7,6 +7,7 @@ import {
   ResizeSettings,
   VideoSettings,
 } from '../types';
+import { trackConversion, trackConversionError } from '../utils/analytics';
 
 // Retry mechanism for failed conversions
 const convertWithRetry = async (
@@ -97,6 +98,13 @@ export function useConversion() {
                   convertedSize: convertedBlob.size,
                   convertedPreview,
                 });
+
+                // Track successful conversion
+                trackConversion(
+                  file.isVideo ? 'video' : 'image',
+                  file.file.size,
+                  convertedBlob.size
+                );
               } else {
                 updateFile(file.id, { status: 'error', progress: 0 });
               }
@@ -114,6 +122,12 @@ export function useConversion() {
                 progress: 0,
                 errorMessage: errorMessage,
               });
+
+              // Track conversion error
+              trackConversionError(
+                file.isVideo ? 'video' : 'image',
+                errorMessage
+              );
             }
           })
         );

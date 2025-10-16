@@ -10,6 +10,7 @@ import {
 import { useConversion, useDownload, useFileManager } from './hooks';
 import { ResizeSettings, VideoSettings } from './types';
 import { trackPerformance } from './utils/performanceUtils';
+import { trackSettingChange } from './utils/analytics';
 
 function App() {
   const [quality, setQuality] = useState<number>(80);
@@ -42,12 +43,26 @@ function App() {
   const { isConverting, convertAllFiles } = useConversion();
   const { isCreatingZip, downloadFile, downloadAll } = useDownload();
 
+  const handleQualityChange = useCallback((newQuality: number) => {
+    setQuality(newQuality);
+    trackSettingChange('image_quality', newQuality);
+  }, []);
+
   const handleGlobalResizeChange = useCallback(
     (field: 'maxWidth' | 'maxHeight', value: number) => {
-      setGlobalResizeSettings(prev => ({ ...prev, [field]: value }));
+      setGlobalResizeSettings(prev => {
+        const newSettings = { ...prev, [field]: value };
+        trackSettingChange('resize_settings', { field, value });
+        return newSettings;
+      });
     },
     []
   );
+
+  const handleGlobalVideoChange = useCallback((newSettings: VideoSettings) => {
+    setGlobalVideoSettings(newSettings);
+    trackSettingChange('video_settings', newSettings);
+  }, []);
 
   const handleConvertAll = useCallback(() => {
     trackPerformance('convertAllFiles', () =>
@@ -114,11 +129,11 @@ function App() {
           <ConversionSettings
             files={files}
             quality={quality}
-            onQualityChange={setQuality}
+            onQualityChange={handleQualityChange}
             globalResizeSettings={globalResizeSettings}
             onGlobalResizeChange={handleGlobalResizeChange}
             globalVideoSettings={globalVideoSettings}
-            onGlobalVideoChange={setGlobalVideoSettings}
+            onGlobalVideoChange={handleGlobalVideoChange}
             onApplyGlobalResizeToAll={handleApplyGlobalResize}
             onApplyGlobalImageSettingsToAll={handleApplyGlobalImageSettings}
             onApplyGlobalVideoToAll={handleApplyGlobalVideo}

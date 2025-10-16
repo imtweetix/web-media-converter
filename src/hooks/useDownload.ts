@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { FileItem } from '../types';
 import { createZipWithBrowserAPIs, downloadBlob } from '../utils/zipUtils';
 import { ConversionService } from '../services/conversionService';
+import { trackDownload } from '../utils/analytics';
 
 export function useDownload() {
   const [isCreatingZip, setIsCreatingZip] = useState<boolean>(false);
@@ -15,6 +16,9 @@ export function useDownload() {
       file.name.replace(/\.[^/.]+$/, extension)
     );
     downloadBlob(file.convertedBlob, filename);
+
+    // Track single file download
+    trackDownload('single', 1);
   }, []);
 
   const downloadFilesIndividually = useCallback(
@@ -44,6 +48,9 @@ export function useDownload() {
         const zipBlob = await createZipWithBrowserAPIs(convertedFiles);
         const filename = `converted-files-${new Date().toISOString().slice(0, 10)}.zip`;
         downloadBlob(zipBlob, filename);
+
+        // Track batch download
+        trackDownload('batch', convertedFiles.length);
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'Unknown error';
@@ -52,6 +59,9 @@ export function useDownload() {
           errorMessage
         );
         downloadFilesIndividually(convertedFiles);
+
+        // Track batch download (fallback to individual)
+        trackDownload('batch', convertedFiles.length);
       }
 
       setIsCreatingZip(false);

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { trackFileUpload } from '../utils/analytics';
 
 export function useDragAndDrop(onFilesDropped: (files: File[]) => void) {
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -20,7 +21,11 @@ export function useDragAndDrop(onFilesDropped: (files: File[]) => void) {
       setDragActive(false);
 
       const droppedFiles = Array.from(e.dataTransfer.files);
-      onFilesDropped(droppedFiles);
+      if (droppedFiles.length > 0) {
+        // Track file upload via drag and drop
+        trackFileUpload(droppedFiles.length, 'drag_drop');
+        onFilesDropped(droppedFiles);
+      }
     },
     [onFilesDropped]
   );

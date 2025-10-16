@@ -46,6 +46,7 @@
 - 📊 **File Insights**: Shows original vs compressed file sizes and dimension changes
 - 🧠 **Advanced Memory Management**: Automatic cleanup with memory pressure monitoring
 - 🔄 **Reliable Processing**: Automatic retry mechanism for failed conversions
+- 📈 **User Analytics**: Google Analytics 4 integration for understanding usage patterns and improving the app
 
 ## 🎯 Supported Formats
 
@@ -187,7 +188,8 @@ web-media-converter/
 │   │   ├── conversionService.ts # Image conversion functions
 │   │   └── videoConversionService.ts # Video conversion functions
 │   ├── utils/              # Utility functions
-│   │   └── zipUtils.ts     # ZIP file creation
+│   │   ├── zipUtils.ts     # ZIP file creation
+│   │   └── analytics.ts    # Google Analytics tracking
 │   ├── types.ts            # TypeScript definitions
 │   ├── App.tsx             # Main application (95 lines)
 │   ├── main.tsx            # Application entry point
@@ -217,6 +219,11 @@ web-media-converter/
 - **[Prettier](https://prettier.io/)** - Code formatting
 - **[PostCSS](https://postcss.org/)** - CSS processing
 - **[Autoprefixer](https://autoprefixer.github.io/)** - CSS vendor prefixes
+
+### Analytics & Monitoring
+- **[Google Analytics 4](https://analytics.google.com/)** - User behavior tracking and insights
+- **Custom Event Tracking** - Conversions, downloads, uploads, and settings changes
+- **Privacy-Focused** - No personally identifiable information collected
 
 ## 🤝 Contributing
 
@@ -383,6 +390,14 @@ For performance analysis, use browser-based tools:
 - [Vite Team](https://vitejs.dev/team/) for the incredible build tool
 - [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
 - [FontAwesome](https://fontawesome.com/) for the professional icons
+
+---
+
+## 📌 Version
+
+**Current Version:** `2.3.0` - Released January 16, 2025
+
+For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 
 ---
 

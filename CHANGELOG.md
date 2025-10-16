@@ -5,6 +5,72 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-01-16
+
+### 📊 **Analytics & User Insights**
+
+This release adds comprehensive Google Analytics integration to track user behavior and improve the application based on real usage data.
+
+### Added
+- 📈 **Google Analytics 4 Integration**: Complete GA4 setup with automatic page view tracking
+  - Configured in `index.html` with proper CSP headers
+  - Production-ready implementation across all environments
+- 🎯 **Conversion Tracking**: Detailed metrics for file conversions
+  - Tracks file type (image/video), original size, converted size
+  - Automatic compression ratio calculation
+  - Success and error event tracking
+- 📥 **Download Analytics**: Monitor user download behavior
+  - Single file download tracking
+  - Batch download (ZIP) tracking with file counts
+  - Download method differentiation
+- 📤 **Upload Event Tracking**: Understand how users add files
+  - Drag & drop upload tracking
+  - File picker upload tracking
+  - File count metrics per upload session
+- ⚙️ **Settings Change Tracking**: Monitor user preferences
+  - Image quality adjustments
+  - Resize setting modifications
+  - Video setting changes (resolution, CRF, FPS, audio)
+- 🛠️ **Analytics Utility Module**: Type-safe tracking functions
+  - `trackConversion()` - Conversion events with detailed metrics
+  - `trackDownload()` - Download events with type and count
+  - `trackFileUpload()` - Upload events with method and count
+  - `trackConversionError()` - Error tracking for debugging
+  - `trackSettingChange()` - User preference monitoring
+
+### Enhanced
+- 🔒 **Content Security Policy**: Updated CSP in all three locations
+  - `index.html` - Meta tag CSP for fallback
+  - `vite.config.ts` - Dev server CSP headers
+  - `netlify.toml` - Production HTTP headers
+  - Added Google Analytics domains to `script-src`, `img-src`, and `connect-src`
+- 📊 **User Experience Insights**: Foundation for data-driven improvements
+  - Real-time event tracking in Google Analytics
+  - Custom event parameters for detailed analysis
+  - Privacy-focused implementation (no PII collected)
+
+### Technical Details
+- **Integration Points**:
+  - `useConversion.ts` - Conversion success/error tracking
+  - `useDownload.ts` - Download event tracking
+  - `useDragAndDrop.ts` - Drag & drop upload tracking
+  - `UploadArea.tsx` - File picker upload tracking
+  - `App.tsx` - Settings change tracking
+- **Event Schema**: Custom events with structured parameters
+- **Type Safety**: Full TypeScript support with global `gtag` interface
+- **CSP Compliance**: Whitelisted Google Analytics domains across all environments
+
+### Files Modified
+- `index.html` - Added GA4 script and updated CSP
+- `vite.config.ts` - Updated dev server CSP
+- `netlify.toml` - Updated production CSP
+- `src/utils/analytics.ts` - New analytics utility module
+- `src/hooks/useConversion.ts` - Added conversion tracking
+- `src/hooks/useDownload.ts` - Added download tracking
+- `src/hooks/useDragAndDrop.ts` - Added drag & drop tracking
+- `src/components/features/UploadArea.tsx` - Added file picker tracking
+- `src/App.tsx` - Added settings change tracking
+
 ## [2.2.1] - 2025-01-09
 
 ### 🔧 **PROJECT REBRANDING & MAINTENANCE**

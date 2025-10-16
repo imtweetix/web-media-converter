@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from 'react';
 import { useDragAndDrop } from '../../hooks';
 import { Button, Input } from '../ui';
+import { trackFileUpload } from '../../utils/analytics';
 
 interface UploadAreaProps {
   onFilesSelected: (files: File[]) => void;
@@ -15,7 +16,12 @@ export function UploadArea({ onFilesSelected }: UploadAreaProps) {
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      onFilesSelected(Array.from(e.target.files));
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        // Track file upload via file picker
+        trackFileUpload(files.length, 'file_picker');
+        onFilesSelected(files);
+      }
     }
   };
 
