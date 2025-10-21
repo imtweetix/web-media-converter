@@ -43,7 +43,11 @@ export function useConversion() {
       const filesToConvert = files.filter(f => f.status === 'pending');
       // Dynamically adjust concurrent limit based on device capability
       const deviceCapability = navigator.hardwareConcurrency || 3;
-      const CONCURRENT_LIMIT = Math.min(deviceCapability, 4, filesToConvert.length); // Process up to 4 files simultaneously on capable devices
+      const CONCURRENT_LIMIT = Math.min(
+        deviceCapability,
+        4,
+        filesToConvert.length
+      ); // Process up to 4 files simultaneously on capable devices
 
       // Update status to converting for all pending files
       filesToConvert.forEach(file => {

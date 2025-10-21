@@ -333,11 +333,15 @@ export class VideoConversionService {
 
             // Generate thumbnail for the converted video
             try {
-              const thumbnailUrl = await this.getVideoThumbnailFromBlob(webmBlob);
+              const thumbnailUrl =
+                await this.getVideoThumbnailFromBlob(webmBlob);
               // Store the thumbnail URL in the file item
               updateFile(file.id, { convertedPreview: thumbnailUrl });
             } catch (error) {
-              console.warn('Could not generate converted video thumbnail:', error);
+              console.warn(
+                'Could not generate converted video thumbnail:',
+                error
+              );
             }
 
             // Clean up blob URL when done
@@ -658,7 +662,10 @@ export class VideoConversionService {
       }
 
       // Set a dynamic timeout based on file size (3-10 seconds)
-      const dynamicTimeout = Math.min(10000, Math.max(3000, videoFile.size / 100000));
+      const dynamicTimeout = Math.min(
+        10000,
+        Math.max(3000, videoFile.size / 100000)
+      );
       const timeout = setTimeout(() => {
         cleanup();
         resolve(this.generateFallbackThumbnail(videoFile.name));
