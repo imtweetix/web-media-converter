@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1] - 2025-01-21
+
+### 🔧 **Dependency Updates & Security Improvements**
+
+This release updates all dependencies to their latest stable versions and improves security configuration.
+
+### Changed
+- 📦 **Dependency Updates**: Updated all packages to latest stable versions
+  - @types/node: 22.18.6 → 24.9.1 (major update for Node.js 24 support)
+  - @types/react-dom: 19.2.1 → 19.2.2 (patch update)
+  - vite: 7.1.9 → 7.1.11 (patch update with bug fixes)
+  - tailwindcss: 3.4.17 → 3.4.18 (patch update)
+- 🔒 **Security Improvements**: Enhanced secret management
+  - Added .npmrc to .gitignore to prevent token leakage
+  - Removed .npmrc from git tracking
+  - Created .npmrc.example as template for developers
+  - Updated CI/CD workflows with proper FontAwesome authentication
+- 🛡️ **CI/CD Security**: Fixed deployment authentication
+  - Added FontAwesome registry configuration to GitHub Actions workflows
+  - Resolved npm E401 authentication errors in automated builds
+  - Ensured FONTAWESOME_PACKAGE_TOKEN is properly configured
+
+### Technical Details
+- All dependency updates tested with type-check and production build
+- No breaking changes introduced
+- Bundle size maintained at ~90.71 kB gzipped
+- Build time: ~4.08s
+- Full TypeScript compliance verified
+
 ## [2.4.0] - 2025-01-20
 
 ### 🎨 **UI/UX Enhancements & Security Improvements**

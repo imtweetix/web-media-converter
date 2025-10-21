@@ -399,7 +399,7 @@ For performance analysis, use browser-based tools:
 
 ## 📌 Version
 
-**Current Version:** `2.4.0` - Released January 20, 2025
+**Current Version:** `2.4.1` - Released January 21, 2025
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 
