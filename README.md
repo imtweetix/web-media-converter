@@ -32,7 +32,8 @@
 - 📐 **Resolution Scaling**: Multiple resolution presets with custom dimension support
 - 🎚️ **Advanced Quality Control**: CRF-based quality settings for optimal compression
 - 🔊 **Audio Options**: Include or exclude audio tracks during conversion
-- 🖼️ **Smart Previews**: Automatic placeholder generation for converted videos
+- 🖼️ **Smart Previews**: Automatic thumbnail generation for converted videos
+- 🔍 **Lightbox Viewer**: Click to preview converted media in fullscreen
 - ⚡ **Browser-based**: Uses MediaRecorder API with VP8/VP9 codec support
 
 ### 🛠️ **Universal Features**
@@ -47,6 +48,9 @@
 - 🧠 **Advanced Memory Management**: Automatic cleanup with memory pressure monitoring
 - 🔄 **Reliable Processing**: Automatic retry mechanism for failed conversions
 - 📈 **User Analytics**: Google Analytics 4 integration for understanding usage patterns and improving the app
+- 🎨 **Modern UI**: Custom Select components with Headless UI for enhanced accessibility
+- 🔒 **Privacy Disclosure**: Transparent analytics notice with clear privacy commitments
+- ⚙️ **Adaptive Performance**: Dynamic concurrent processing based on device hardware
 
 ## 🎯 Supported Formats
 
@@ -395,7 +399,7 @@ For performance analysis, use browser-based tools:
 
 ## 📌 Version
 
-**Current Version:** `2.3.0` - Released January 16, 2025
+**Current Version:** `2.4.0` - Released January 20, 2025
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 

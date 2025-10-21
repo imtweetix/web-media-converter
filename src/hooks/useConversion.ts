@@ -41,7 +41,9 @@ export function useConversion() {
       setIsConverting(true);
 
       const filesToConvert = files.filter(f => f.status === 'pending');
-      const CONCURRENT_LIMIT = Math.min(3, filesToConvert.length); // Process up to 3 files simultaneously
+      // Dynamically adjust concurrent limit based on device capability
+      const deviceCapability = navigator.hardwareConcurrency || 3;
+      const CONCURRENT_LIMIT = Math.min(deviceCapability, 4, filesToConvert.length); // Process up to 4 files simultaneously on capable devices
 
       // Update status to converting for all pending files
       filesToConvert.forEach(file => {
@@ -86,18 +88,21 @@ export function useConversion() {
               const convertedBlob = await convertWithRetry(convertFn);
 
               if (convertedBlob) {
-                // For videos, don't create a preview from the blob since it's a video file
-                const convertedPreview = file.isVideo
-                  ? null
-                  : URL.createObjectURL(convertedBlob);
-
-                updateFile(file.id, {
+                // For images, create a preview from the blob
+                // For videos, the preview is generated in the conversion service
+                const updates: Partial<FileItem> = {
                   status: 'converted',
                   progress: 100,
                   convertedBlob,
                   convertedSize: convertedBlob.size,
-                  convertedPreview,
-                });
+                };
+
+                // Only set convertedPreview for images (videos handle it in their service)
+                if (!file.isVideo) {
+                  updates.convertedPreview = URL.createObjectURL(convertedBlob);
+                }
+
+                updateFile(file.id, updates);
 
                 // Track successful conversion
                 trackConversion(

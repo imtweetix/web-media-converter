@@ -2,15 +2,19 @@ import {
   faArrowDownToBracket,
   faXmark,
 } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+import {
+  faMagnifyingGlass,
+  faPlay,
+} from '@awesome.me/kit-26a4d59a75/icons/classic/solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ConversionService } from '../../services/conversionService';
 import {
   FileItem as FileItemType,
   ResizeSettings,
   VideoSettings,
 } from '../../types';
-import { Input, ProgressBar, StatusBadge } from '../ui';
+import { Input, Lightbox, ProgressBar, StatusBadge } from '../ui';
 
 interface FileItemProps {
   file: FileItemType;
@@ -37,6 +41,8 @@ export const FileItem = React.memo(function FileItem({
   onUpdateVideoSettings,
   onUpdateFile,
 }: FileItemProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
   // Memoize utility functions
   const formatFileSize = useMemo(() => ConversionService.formatFileSize, []);
   const getSavingsPercentage = useMemo(
@@ -124,6 +130,16 @@ export const FileItem = React.memo(function FileItem({
     onDownload(file);
   }, [file, onDownload]);
 
+  const handleOpenLightbox = useCallback(() => {
+    if (file.convertedBlob || file.convertedPreview) {
+      setLightboxOpen(true);
+    }
+  }, [file.convertedBlob, file.convertedPreview]);
+
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxOpen(false);
+  }, []);
+
   // Memoize computed values
   const fileSizeInfo = useMemo(
     () => ({
@@ -165,23 +181,34 @@ export const FileItem = React.memo(function FileItem({
           </div>
           {(file.convertedPreview || file.status === 'converted') && (
             <div className='flex flex-col items-center'>
-              <div className='relative'>
+              <div
+                className='relative cursor-pointer group'
+                onClick={handleOpenLightbox}
+                title='Click to preview'
+              >
                 {file.convertedPreview ? (
-                  <img
-                    src={file.convertedPreview}
-                    alt='Converted'
-                    className='w-16 h-16 object-cover rounded-lg border file-preview'
-                  />
+                  <>
+                    <img
+                      src={file.convertedPreview}
+                      alt='Converted'
+                      className='w-16 h-16 object-cover rounded-lg border file-preview group-hover:opacity-80 transition-opacity'
+                    />
+                    <div className='absolute inset-0 flex items-center justify-center pointer-events-none'>
+                      <div className='bg-black flex items-center justify-center size-10 bg-opacity-50 rounded-full group-hover:bg-opacity-70 transition-all'>
+                        <FontAwesomeIcon
+                          icon={file.isVideo ? faPlay : faMagnifyingGlass}
+                          className='h-4 w-4 text-white'
+                        />
+                      </div>
+                    </div>
+                  </>
                 ) : (
-                  // Placeholder for videos without preview
+                  // Placeholder for videos without preview (shouldn't happen now)
                   <div className='w-16 h-16 rounded-lg border bg-gray-100 flex items-center justify-center'>
-                    <svg
-                      className='w-8 h-8 text-gray-400'
-                      fill='currentColor'
-                      viewBox='0 0 20 20'
-                    >
-                      <path d='M2 6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM4 8v8h12V8H4zm2 2l4 3 4-3v6H6v-6z' />
-                    </svg>
+                    <FontAwesomeIcon
+                      icon={faPlay}
+                      className='h-8 w-8 text-gray-400'
+                    />
                   </div>
                 )}
               </div>
@@ -511,6 +538,20 @@ export const FileItem = React.memo(function FileItem({
           </div>
         </div>
       </div>
+
+      {/* Lightbox for previewing converted media */}
+      {file.convertedBlob && (
+        <Lightbox
+          isOpen={lightboxOpen}
+          onClose={handleCloseLightbox}
+          mediaUrl={URL.createObjectURL(file.convertedBlob)}
+          mediaType={file.isVideo ? 'video' : 'image'}
+          fileName={file.name.replace(
+            /\.[^/.]+$/,
+            file.isVideo ? '.webm' : '.webp'
+          )}
+        />
+      )}
     </div>
   );
 });

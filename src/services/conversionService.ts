@@ -51,7 +51,7 @@ export class ConversionService {
 
         img.onload = () => {
           try {
-            updateProgress(40);
+            updateProgress(20);
 
             const MAX_CANVAS_DIMENSION = 16384;
             if (
@@ -66,6 +66,8 @@ export class ConversionService {
               return;
             }
 
+            updateProgress(30);
+
             const originalDimensions = { width: img.width, height: img.height };
 
             const effectiveResizeSettings = file.resizeSettings?.enabled
@@ -79,6 +81,8 @@ export class ConversionService {
             );
 
             updateFile(file.id, { originalDimensions, finalDimensions });
+
+            updateProgress(50);
 
             canvas.width = finalDimensions.width;
             canvas.height = finalDimensions.height;
@@ -102,6 +106,8 @@ export class ConversionService {
               file.file.name.toLowerCase().endsWith('.png');
             const webpQuality =
               hasTransparency && quality > 90 ? 1.0 : quality / 100;
+
+            updateProgress(90);
 
             canvas.toBlob(
               blob => {

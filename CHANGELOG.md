@@ -5,6 +5,99 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-01-20
+
+### 🎨 **UI/UX Enhancements & Security Improvements**
+
+This release brings major user experience improvements with a new lightbox viewer, custom accessible dropdowns, enhanced video thumbnails, and important security hardening.
+
+### Added
+- 🔍 **Lightbox Media Viewer**: Full-screen preview for converted media
+  - Click converted thumbnails to open lightbox
+  - Native HTML5 video player with full controls
+  - High-resolution image preview
+  - ESC key to close, click outside to dismiss
+  - Body scroll lock when lightbox is open
+  - Proper cleanup and memory management
+- 🎨 **Custom Select Component**: Accessible dropdown replacement
+  - Built with Headless UI React (@headlessui/react v2.2.9)
+  - Full keyboard navigation support
+  - ARIA-compliant for screen readers
+  - Smooth animations and transitions
+  - Replaced native select elements in video settings
+- 🖼️ **Enhanced Video Thumbnails**: Automatic thumbnail generation for converted videos
+  - Dynamic timeout based on file size
+  - Asynchronous thumbnail creation
+  - Proper error handling with fallback
+  - Memory-efficient implementation
+- 🎯 **Visual Icon Overlays**: Intuitive preview indicators
+  - Play icon (solid) on converted video thumbnails
+  - Magnifying glass icon (solid) on converted image thumbnails
+  - Semi-transparent overlay for better visibility
+  - No icon on original video thumbnails for cleaner UI
+- 🔒 **Privacy Disclosure**: Transparent analytics notice
+  - Added privacy section to InfoCard component
+  - Clear explanation of what data is collected
+  - Emphasis on client-side processing and file privacy
+  - User-friendly language for transparency
+
+### Changed
+- 🛡️ **Content Security Policy Hardening**: Removed unsafe directives in production
+  - Removed `'unsafe-inline'` and `'unsafe-eval'` from production CSP (netlify.toml:20)
+  - Maintained development convenience in vite.config.ts
+  - Better security posture for production deployment
+  - Added specific Google Analytics domains to CSP whitelist
+- ⚙️ **Adaptive Concurrent Processing**: Dynamic hardware-based limits
+  - Uses `navigator.hardwareConcurrency` to detect CPU cores
+  - Adjusts concurrent file processing (1-4 files max)
+  - Better performance on high-end devices
+  - Prevents overload on low-end devices
+
+### Fixed
+- 🎚️ **Image Quality Slider**: Corrected percentage calculation
+  - Fixed visual alignment issue where 50% quality showed as 44.44%
+  - Changed calculation from 10-100 range to 0-100 range
+  - Added Math.max(10) protection to enforce minimum quality
+  - Slider now visually matches selected quality percentage
+- 🖼️ **Video Preview Generation**: Fixed missing converted video thumbnails
+  - Separated image and video preview handling in useConversion.ts
+  - Videos now generate thumbnails asynchronously in VideoConversionService
+  - Proper error handling with console warnings for failed thumbnails
+  - Images continue to use blob URL approach
+
+### Enhanced
+- 📊 **Progress Tracking**: More granular progress updates
+  - Image conversion: Added intermediate steps (10→20→30→50→60→80→90→100)
+  - Video conversion: Frame-based progress updates for smoother feedback
+  - Better user experience during long conversions
+- 🎥 **Video Conversion Service**: Improved thumbnail generation
+  - `getVideoThumbnailFromBlob()` method for converted videos
+  - Dynamic timeout based on file size (3-10 seconds)
+  - Canvas-based thumbnail extraction at 1-second mark
+  - Proper video element cleanup after thumbnail generation
+
+### Technical Details
+- **New Dependencies**:
+  - @headlessui/react v2.2.9 - Accessible UI components
+- **Modified Files**:
+  - `src/components/ui/Lightbox.tsx` - New lightbox component
+  - `src/components/ui/Select.tsx` - New custom select component
+  - `src/components/ui/index.ts` - Export new UI components
+  - `src/components/features/FileItem.tsx` - Icon overlays and lightbox integration
+  - `src/components/features/ConversionSettings.tsx` - Slider fix and Select integration
+  - `src/components/features/InfoCard.tsx` - Privacy disclosure
+  - `src/services/videoConversionService.ts` - Enhanced thumbnail generation
+  - `src/hooks/useConversion.ts` - Dynamic concurrency and preview handling
+  - `netlify.toml` - Production CSP hardening
+- **Type Safety**: Full TypeScript compliance maintained
+- **Accessibility**: WCAG 2.1 compliant components
+- **Performance**: No negative impact on bundle size or runtime performance
+
+### Developer Experience
+- 📚 **Better Component Architecture**: Reusable Lightbox and Select components
+- 🎯 **Improved Type Safety**: Proper TypeScript interfaces for all new components
+- 🧪 **Testing-Ready**: Components designed with testability in mind
+
 ## [2.3.0] - 2025-01-16
 
 ### 📊 **Analytics & User Insights**

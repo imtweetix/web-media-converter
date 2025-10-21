@@ -27,7 +27,7 @@ export function InfoCard() {
             offering excellent compression and quality for video content with
             support for dynamic frame rates and resolutions.
           </p>
-          <div className='grid grid-cols-2 gap-2 text-sm text-gray-500'>
+          <div className='grid grid-cols-2 gap-2 text-sm text-gray-500 mb-3'>
             <div className='flex items-center'>
               <FontAwesomeIcon icon={faBoxArchive} className='h-4 w-4 mr-1' />
               <span>Built-in ZIP creation</span>
@@ -44,6 +44,14 @@ export function InfoCard() {
               <span className='w-3 h-3 mr-1 bg-green-500 rounded'></span>
               <span>Resolution scaling</span>
             </div>
+          </div>
+          <div className='pt-3 border-t border-gray-200'>
+            <p className='text-xs text-gray-500 leading-relaxed'>
+              <strong>Privacy:</strong> All conversions happen in your browser.
+              Files never leave your device. We collect anonymous usage
+              statistics (file counts, sizes, conversion times) to improve the
+              app, but no file content is ever tracked or uploaded.
+            </p>
           </div>
         </div>
       </div>

@@ -327,9 +327,18 @@ export class VideoConversionService {
             }
           };
 
-          mediaRecorder.onstop = () => {
+          mediaRecorder.onstop = async () => {
             const webmBlob = new Blob(chunks, { type: 'video/webm' });
             updateProgress(100);
+
+            // Generate thumbnail for the converted video
+            try {
+              const thumbnailUrl = await this.getVideoThumbnailFromBlob(webmBlob);
+              // Store the thumbnail URL in the file item
+              updateFile(file.id, { convertedPreview: thumbnailUrl });
+            } catch (error) {
+              console.warn('Could not generate converted video thumbnail:', error);
+            }
 
             // Clean up blob URL when done
             setTimeout(() => {
@@ -375,6 +384,7 @@ export class VideoConversionService {
             Math.max(30000, duration * 1000 * 2)
           ); // 30 seconds minimum, or 2x video duration
 
+          let frameCount = 0;
           const drawFrame = () => {
             if (
               !isRecording ||
@@ -415,9 +425,15 @@ export class VideoConversionService {
                   finalDimensions.height
                 );
 
-                // Update progress based on video playback
-                const progress = 60 + (video.currentTime / video.duration) * 35;
-                updateProgress(Math.min(progress, 95));
+                // Update progress based on video playback - more accurate calculation
+                const playbackProgress = video.currentTime / video.duration;
+                const progress = 60 + playbackProgress * 38; // 60-98% range
+
+                // Update progress every 10 frames for smoother feedback
+                frameCount++;
+                if (frameCount % 10 === 0) {
+                  updateProgress(Math.min(Math.round(progress), 98));
+                }
 
                 lastTime = video.currentTime;
               } catch (error) {
@@ -572,7 +588,7 @@ export class VideoConversionService {
     return { isValid: true };
   }
 
-  static getVideoThumbnail(videoFile: File): Promise<string> {
+  static getVideoThumbnailFromBlob(videoBlob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');
       const canvas = document.createElement('canvas');
@@ -586,8 +602,67 @@ export class VideoConversionService {
       // Set a timeout for thumbnail generation
       const timeout = setTimeout(() => {
         cleanup();
+        reject(new Error('Thumbnail generation timed out'));
+      }, 5000);
+
+      const cleanup = () => {
+        clearTimeout(timeout);
+        if (video.src && video.src.startsWith('blob:')) {
+          URL.revokeObjectURL(video.src);
+        }
+      };
+
+      video.onloadedmetadata = () => {
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 360;
+
+        video.currentTime = Math.min(1, video.duration / 4);
+      };
+
+      video.onseeked = () => {
+        try {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const thumbnail = canvas.toDataURL('image/jpeg', 0.7);
+          cleanup();
+          resolve(thumbnail);
+        } catch (error) {
+          cleanup();
+          reject(error);
+        }
+      };
+
+      video.onerror = () => {
+        cleanup();
+        reject(new Error('Failed to load video'));
+      };
+
+      try {
+        const blobUrl = URL.createObjectURL(videoBlob);
+        video.src = blobUrl;
+      } catch (error) {
+        cleanup();
+        reject(error);
+      }
+    });
+  }
+
+  static getVideoThumbnail(videoFile: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        reject(new Error('Could not get canvas context'));
+        return;
+      }
+
+      // Set a dynamic timeout based on file size (3-10 seconds)
+      const dynamicTimeout = Math.min(10000, Math.max(3000, videoFile.size / 100000));
+      const timeout = setTimeout(() => {
+        cleanup();
         resolve(this.generateFallbackThumbnail(videoFile.name));
-      }, 5000); // 5 second timeout
+      }, dynamicTimeout);
 
       const cleanup = () => {
         clearTimeout(timeout);

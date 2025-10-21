@@ -2,7 +2,7 @@ import { faGear } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { FileItem, ResizeSettings, VideoSettings } from '../../types';
-import { Button, Card, Input } from '../ui';
+import { Button, Card, Input, Select } from '../ui';
 
 interface ConversionSettingsProps {
   files: FileItem[];
@@ -41,13 +41,13 @@ export function ConversionSettings({
   const hasMixedTypes = hasImages && hasVideos;
 
   const handleQualityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onQualityChange(Number(e.target.value));
+    const value = Number(e.target.value);
+    // Ensure quality never goes below 10
+    onQualityChange(Math.max(10, value));
   };
 
-  const handleVideoResolutionChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const resolution = e.target.value as VideoSettings['resolution'];
+  const handleVideoResolutionChange = (value: string) => {
+    const resolution = value as VideoSettings['resolution'];
     onGlobalVideoChange({
       ...globalVideoSettings,
       resolution,
@@ -63,8 +63,8 @@ export function ConversionSettings({
     });
   };
 
-  const handleFpsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const fps = e.target.value as VideoSettings['fps'];
+  const handleFpsChange = (value: string) => {
+    const fps = value as VideoSettings['fps'];
     onGlobalVideoChange({
       ...globalVideoSettings,
       fps,
@@ -93,10 +93,9 @@ export function ConversionSettings({
     }
   };
 
-  // Calculate the correct percentage for the range slider background
-  const min = 10;
-  const max = 100;
-  const percentage = ((quality - min) / (max - min)) * 100;
+  // Calculate percentage from 0-100 for proper visual alignment
+  // The quality value itself is the percentage since it ranges from 10-100
+  const percentage = quality;
 
   // Calculate CRF slider percentage (inverted because lower CRF = better quality)
   const crfMin = 0;
@@ -137,7 +136,7 @@ export function ConversionSettings({
         <div className='flex-1 max-w-xs'>
           <input
             type='range'
-            min='10'
+            min='0'
             max='100'
             value={quality}
             onChange={handleQualityChange}
@@ -272,89 +271,71 @@ export function ConversionSettings({
           </Button>
         </div>
 
-        <div className='mb-6'>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
-            Resolution
-          </label>
-          <select
-            value={globalVideoSettings.resolution}
-            onChange={handleVideoResolutionChange}
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-            title='Select video resolution'
-            aria-label='Video resolution'
-          >
-            {videoResolutions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        <div className='grid grid-cols-2 gap-4'>
+          <div className='mb-6'>
+            <Select
+              label='Resolution'
+              options={videoResolutions}
+              value={globalVideoSettings.resolution}
+              onChange={handleVideoResolutionChange}
+            />
 
-          {globalVideoSettings.resolution === 'custom' && (
-            <div className='grid grid-cols-2 gap-4 mt-4'>
-              <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Width (px)
-                </label>
-                <Input
-                  type='number'
-                  min='100'
-                  max='7680'
-                  value={globalVideoSettings.customWidth || ''}
-                  onChange={e => {
-                    const value = parseInt(e.target.value);
-                    if (!isNaN(value)) {
-                      onGlobalVideoChange({
-                        ...globalVideoSettings,
-                        customWidth: value,
-                      });
-                    }
-                  }}
-                  placeholder='1920'
-                />
+            {globalVideoSettings.resolution === 'custom' && (
+              <div className='grid grid-cols-2 gap-4 mt-4'>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Width (px)
+                  </label>
+                  <Input
+                    type='number'
+                    min='100'
+                    max='7680'
+                    value={globalVideoSettings.customWidth || ''}
+                    onChange={e => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value)) {
+                        onGlobalVideoChange({
+                          ...globalVideoSettings,
+                          customWidth: value,
+                        });
+                      }
+                    }}
+                    placeholder='1920'
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Height (px)
+                  </label>
+                  <Input
+                    type='number'
+                    min='100'
+                    max='4320'
+                    value={globalVideoSettings.customHeight || ''}
+                    onChange={e => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value)) {
+                        onGlobalVideoChange({
+                          ...globalVideoSettings,
+                          customHeight: value,
+                        });
+                      }
+                    }}
+                    placeholder='1080'
+                  />
+                </div>
               </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
-                  Height (px)
-                </label>
-                <Input
-                  type='number'
-                  min='100'
-                  max='4320'
-                  value={globalVideoSettings.customHeight || ''}
-                  onChange={e => {
-                    const value = parseInt(e.target.value);
-                    if (!isNaN(value)) {
-                      onGlobalVideoChange({
-                        ...globalVideoSettings,
-                        customHeight: value,
-                      });
-                    }
-                  }}
-                  placeholder='1080'
-                />
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <div className='mb-6'>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
-            Frame Rate (FPS)
-          </label>
-          <select
-            value={globalVideoSettings.fps || 'default'}
-            onChange={handleFpsChange}
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-            title='Select frame rate'
-            aria-label='Frame rate'
-          >
-            {fpsOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <div className='mb-6'>
+            <Select
+              label='Frame Rate (FPS)'
+              options={fpsOptions}
+              value={globalVideoSettings.fps || 'default'}
+              onChange={handleFpsChange}
+            />
+          </div>
         </div>
 
         <div className='flex items-center'>
