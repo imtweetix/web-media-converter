@@ -2,8 +2,8 @@ import { faArrowUpFromBracket } from '@awesome.me/kit-26a4d59a75/icons/classic/r
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from 'react';
 import { useDragAndDrop } from '../../hooks';
-import { Button, Input } from '../ui';
 import { trackFileUpload } from '../../utils/analytics';
+import { Button, Input } from '../ui';
 
 interface UploadAreaProps {
   onFilesSelected: (files: File[]) => void;

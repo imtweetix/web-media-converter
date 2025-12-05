@@ -42,7 +42,7 @@ export function Button({
       {icon && (
         <FontAwesomeIcon
           icon={icon}
-          className={`h-4 w-4 ${children ? 'mr-2' : ''} ${loading ? 'animate-spin' : ''}`}
+          className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}
         />
       )}
       {children}
