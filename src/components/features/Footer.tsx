@@ -5,21 +5,21 @@ export function Footer() {
 
   return (
     <footer className='mt-6 p-6 rounded-xl shadow-sm border-t border-gray-200 bg-white/50'>
-      <div className='text-sm text-gray-600 grid grid-cols-1 md:grid-cols-2 gap-4 items-center'>
-        <p className='text-center md:text-left'>
-          © {currentYear} Web Media Converter. All rights reserved. <br />
-          Made with ❤️ by{' '}
+      <div className='text-sm text-gray-600 items-center'>
+        <p className='text-center leading-6'>
+          We track anonymous usage metrics to improve the app, but never see
+          your data. <br />© {currentYear} Web Media Converter. All rights
+          reserved.
+        </p>
+        <p className='text-center text-xs text-gray-500 leading-6'>
           <a
-            href='https://github.com/imtweetix'
+            href='https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md'
             target='_blank'
             rel='noopener noreferrer'
             className='text-indigo-600 hover:text-indigo-800 transition-colors'
           >
-            Tweetix
+            v{packageJson.version}
           </a>
-        </p>
-        <p className='text-center md:text-right text-xs text-gray-500'>
-          v{packageJson.version}
         </p>
       </div>
     </footer>
