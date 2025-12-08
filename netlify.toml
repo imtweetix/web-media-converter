@@ -5,6 +5,12 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[context.production]
+  branch = "production"
+
+[context.branch-deploy]
+  command = "echo 'Skipping build for non-production branches'"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
