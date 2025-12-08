@@ -245,7 +245,7 @@ We welcome contributions to improve this SaaS application! You can help by:
 
 ### 🔧 Code Contributions
 1. **Fork the repository**
-2. **Create a feature branch**
+2. **Create a feature branch from main**
    ```bash
    git checkout -b feature/amazing-feature
    ```
@@ -263,7 +263,25 @@ We welcome contributions to improve this SaaS application! You can help by:
    ```bash
    git push origin feature/amazing-feature
    ```
-7. **Open a Pull Request**
+7. **Open a Pull Request to the main branch**
+
+### 🚀 Deployment Workflow
+
+**Branch Strategy:**
+- **`main`** - Development branch (does NOT auto-deploy)
+- **`production`** - Production branch (auto-deploys to Netlify)
+
+**How to Deploy:**
+1. Make and test changes on the `main` branch
+2. When ready to deploy, merge `main` into `production`:
+   ```bash
+   git checkout production
+   git merge main
+   git push origin production
+   ```
+3. Netlify will automatically deploy the `production` branch
+
+This workflow allows you to push changes to `main` as often as needed without triggering deployments. Only merges to `production` will deploy to the live site.
 
 ### 📋 Contribution Guidelines
 - Follow the existing code style
@@ -399,7 +417,7 @@ For performance analysis, use browser-based tools:
 
 ## 📌 Version
 
-**Current Version:** `2.4.1` - Released January 21, 2025
+**Current Version:** `2.5.0` - Released December 8, 2024
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 

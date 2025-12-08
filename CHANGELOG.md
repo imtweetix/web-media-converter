@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2024-12-08
+
+### 🚀 **Deployment Workflow Improvements**
+
+This release introduces a new branch-based deployment strategy for better control over production deployments.
+
+### Added
+- 🌿 **Production Branch Strategy**: Separate development and deployment workflows
+  - Created `production` branch for production deployments
+  - `main` branch no longer triggers automatic Netlify deployments
+  - Deploy to production only when ready by merging `main` into `production`
+- 📝 **Deployment Documentation**: Clear workflow instructions
+  - Added deployment workflow section to README.md
+  - Documented branch strategy and merge process
+  - Step-by-step guide for deploying to production
+
+### Changed
+- ⚙️ **Netlify Configuration**: Branch-based deployment settings
+  - Updated netlify.toml with production branch context
+  - Non-production branches skip builds to save resources
+  - Only `production` branch triggers Netlify deployments
+
+### Benefits
+- ✅ Push to `main` as often as needed without triggering deployments
+- ✅ Better control over when changes go live
+- ✅ Follows industry-standard GitFlow/GitHub Flow practices
+- ✅ Reduces accidental deployments of work-in-progress code
+
 ## [2.4.1] - 2025-01-21
 
 ### 🔧 **Dependency Updates & Security Improvements**
