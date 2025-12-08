@@ -1,5 +1,5 @@
+import { faBolt } from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBolt } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
 
 export function Header() {
   return (
@@ -10,7 +10,7 @@ export function Header() {
           className='h-8 w-8 text-indigo-600 mr-2'
         />
         <h1 className='text-4xl font-bold text-gray-900'>
-          WebP & WebM Media Converter
+          Web Media Converter
         </h1>
       </div>
       <h2 className='text-lg text-gray-600'>

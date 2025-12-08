@@ -1,4 +1,4 @@
-import { faGear } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+import { faGear } from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { FileItem, ResizeSettings, VideoSettings } from '../../types';

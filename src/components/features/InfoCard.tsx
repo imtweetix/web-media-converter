@@ -1,9 +1,9 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBolt,
   faBoxArchive,
   faVideo,
-} from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+} from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Card } from '../ui';
 
 export function InfoCard() {

@@ -1,4 +1,4 @@
-import { faChevronDown } from '@awesome.me/kit-26a4d59a75/icons/classic/solid';
+import { faChevronDown } from '@awesome.me/kit-c9f4d240a1/icons/classic/solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 

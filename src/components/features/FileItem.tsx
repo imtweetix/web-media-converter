@@ -1,11 +1,11 @@
 import {
   faArrowDownToBracket,
   faXmark,
-} from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+} from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
 import {
   faMagnifyingGlass,
   faPlay,
-} from '@awesome.me/kit-26a4d59a75/icons/classic/solid';
+} from '@awesome.me/kit-c9f4d240a1/icons/classic/solid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ConversionService } from '../../services/conversionService';

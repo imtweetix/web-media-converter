@@ -1,15 +1,15 @@
 import {
-  faBolt,
   faArrowDownToBracket,
+  faBolt,
   faBoxArchive,
   faTrashCan,
-} from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+} from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
 import {
   FileItem as FileItemType,
   ResizeSettings,
   VideoSettings,
 } from '../../types';
-import { Card, CardHeader, Button } from '../ui';
+import { Button, Card, CardHeader } from '../ui';
 import { FileItem } from './FileItem';
 
 interface FilesListProps {

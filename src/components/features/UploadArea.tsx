@@ -1,4 +1,4 @@
-import { faArrowUpFromBracket } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+import { faArrowUpFromBracket } from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from 'react';
 import { useDragAndDrop } from '../../hooks';

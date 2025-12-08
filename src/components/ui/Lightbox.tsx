@@ -1,4 +1,4 @@
-import { faXmark } from '@awesome.me/kit-26a4d59a75/icons/classic/regular';
+import { faXmark } from '@awesome.me/kit-c9f4d240a1/icons/classic/regular';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect } from 'react';
 

@@ -92,7 +92,7 @@ export default defineConfig({
   // Optimize dependency pre-bundling
   optimizeDeps: {
     include: ['react', 'react-dom', '@fortawesome/react-fontawesome'],
-    exclude: ['@awesome.me/kit-26a4d59a75'],
+    exclude: ['@awesome.me/kit-c9f4d240a1'],
   },
   // CSS optimization
   css: {

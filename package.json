@@ -21,7 +21,7 @@
     "perf:preview": "npm run build && npm run preview"
   },
   "dependencies": {
-    "@awesome.me/kit-26a4d59a75": "^1.0.25",
+    "@awesome.me/kit-c9f4d240a1": "^1.0.2",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.0",
     "@headlessui/react": "^2.2.9",
