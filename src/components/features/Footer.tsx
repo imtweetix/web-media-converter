@@ -15,7 +15,7 @@ export function Footer() {
             rel='noopener noreferrer'
             className='text-indigo-600 hover:text-indigo-800 transition-colors'
           >
-            Marc Joseph
+            Tweetix
           </a>
         </p>
         <p className='text-center md:text-right text-xs text-gray-500'>
