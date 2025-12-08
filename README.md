@@ -12,7 +12,7 @@
 
 ## 🌐 Try It Now
 
-**Use the live application:** [https://webmediaconverter.netlify.app/](https://webmediaconverter.netlify.app/)
+**Use the live application:** [https://app.webmediaconverter.com/](https://app.webmediaconverter.com/)
 
 > **Note:** This is a proprietary SaaS application. The source code is available for viewing and contributing only. Please use the official web application above for all media conversions.
 
@@ -131,17 +131,17 @@ Configure video output quality and audio options:
 
 ## 📦 Development Commands (Contributors Only)
 
-| Command                 | Description                        |
-| ----------------------- | ---------------------------------- |
-| `npm run dev`           | Start development server           |
-| `npm run build`         | Build for production               |
-| `npm run build:check`   | Type check + build                 |
-| `npm run build:analyze` | Bundle analysis with visualization |
-| `npm run build:profile` | Build with performance profiling   |
-| `npm run preview`       | Preview production build           |
-| `npm run type-check`    | Run TypeScript type checking       |
-| `npm run format`        | Format code with Prettier          |
-| `npm run format:check`  | Check code formatting              |
+| Command                 | Description                               |
+| ----------------------- | ----------------------------------------- |
+| `npm run dev`           | Start development server                  |
+| `npm run build`         | Build for production                      |
+| `npm run build:check`   | Type check + build                        |
+| `npm run build:analyze` | Bundle analysis with visualization        |
+| `npm run build:profile` | Build with performance profiling          |
+| `npm run preview`       | Preview production build                  |
+| `npm run type-check`    | Run TypeScript type checking              |
+| `npm run format`        | Format code with Prettier                 |
+| `npm run format:check`  | Check code formatting                     |
 | `npm run perf:preview`  | Build and preview for performance testing |
 
 > **Important:** These commands are for development and contribution purposes only. Do not use them to deploy or host this application.
