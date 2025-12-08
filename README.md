@@ -8,7 +8,7 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-![Web Media Converter Screenshot](./public/screenshots/app-demo.webp)
+![Web Media Converter Screenshot](./public/screenshots/app-demo-v1.webp)
 
 ## 🌐 Try It Now
 
