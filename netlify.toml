@@ -1,6 +1,6 @@
 [build]
   publish = "dist"
-  command = "npm ci && npm run build"
+  command = "npm ci --legacy-peer-deps && npm run build"
   ignore = "git diff --quiet HEAD^ HEAD -- . ':(exclude)netlify.toml'"
 
 [build.environment]
@@ -8,7 +8,7 @@
 
 # Only build from production branch
 [context.production]
-  command = "npm ci && npm run build"
+  command = "npm ci --legacy-peer-deps && npm run build"
 
 # Prevent all other branches from building
 [context.deploy-preview]
