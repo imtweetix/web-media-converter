@@ -417,9 +417,14 @@ For performance analysis, use browser-based tools:
 
 ## 📌 Version
 
-**Current Version:** `2.5.0` - Released December 8, 2024
+**Current Version:** `2.6.0` - Released December 12, 2025
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
+
+### What's New in 2.6.0
+- **Tailwind CSS 4.x Migration**: Upgraded to the latest Tailwind CSS with CSS-based configuration
+- **Build Improvements**: Enhanced deployment reliability with updated build configurations
+- **Dependency Updates**: All packages updated to their latest compatible versions
 
 ---
 

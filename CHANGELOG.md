@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2025-12-12
+
+### 🔄 **Tailwind CSS 4.x Migration & Build Configuration Updates**
+
+This release migrates the project to Tailwind CSS 4.x with its new CSS-based configuration system and updates build configurations for improved deployment reliability.
+
+### Changed
+- 🎨 **Tailwind CSS 4.x Migration**: Migrated from Tailwind CSS 3.x to 4.x
+  - Replaced `@tailwind` directives with `@import "tailwindcss"`
+  - Converted `@apply` directives to explicit CSS for better compatibility
+  - Removed JavaScript-based `tailwind.config.js` in favor of CSS-based configuration
+  - Updated to use `@tailwindcss/postcss` plugin instead of legacy `tailwindcss` PostCSS plugin
+- 📦 **Dependency Updates**: Updated npm packages to latest compatible versions
+  - Added `@tailwindcss/postcss@^4.1.18` for Tailwind 4.x PostCSS support
+  - Updated `@types/node` to latest version (25.0.1)
+  - All other dependencies updated via `npm update --legacy-peer-deps`
+- 🔧 **Build Configuration**: Updated build settings for better deployment
+  - Modified `postcss.config.js` to use `@tailwindcss/postcss` plugin
+  - Updated `netlify.toml` build commands to include `--legacy-peer-deps` flag
+  - Ensured consistent build behavior across local and production environments
+- 🔒 **NPM Configuration**: Updated `.npmrc` for better token management
+  - Changed from Vite-specific syntax to standard npm environment variable syntax
+  - Improved compatibility with CI/CD environments
+
+### Technical Details
+- **CSS Architecture**: Tailwind 4.x uses CSS imports instead of build-time directives
+- **Component Styles**: All custom component classes maintained with explicit CSS
+- **Build Performance**: Build time maintained at ~3.79s with no regression
+- **Bundle Size**: No significant impact on bundle size
+- **TypeScript Compliance**: Full type-check passes with zero errors
+
+### Migration Notes
+- Tailwind CSS 4.x no longer uses `tailwind.config.js` files
+- Configuration is now done via CSS `@theme` directives (if needed)
+- `@apply` directives should be replaced with explicit CSS for better performance
+- PostCSS plugin changed from `tailwindcss` to `@tailwindcss/postcss`
+
 ## [2.5.0] - 2024-12-08
 
 ### 🚀 **Deployment Workflow Improvements**
