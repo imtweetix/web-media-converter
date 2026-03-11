@@ -1,0 +1,233 @@
+import { FileItem, ProgressCallback, ResizeSettings } from '../types';
+import { trackPerformance } from '../utils/performanceUtils';
+import { VideoConversionService } from './videoConversionService';
+
+export class ConversionService {
+  private static calculateResizeDimensions(
+    originalWidth: number,
+    originalHeight: number,
+    resizeSettings: ResizeSettings
+  ) {
+    if (!resizeSettings.enabled) {
+      return { width: originalWidth, height: originalHeight };
+    }
+
+    const { maxWidth, maxHeight } = resizeSettings;
+
+    if (originalWidth <= maxWidth && originalHeight <= maxHeight) {
+      return { width: originalWidth, height: originalHeight };
+    }
+
+    const scaleX = maxWidth / originalWidth;
+    const scaleY = maxHeight / originalHeight;
+    const scale = Math.min(scaleX, scaleY);
+
+    return {
+      width: Math.round(originalWidth * scale),
+      height: Math.round(originalHeight * scale),
+    };
+  }
+
+  static convertToWebP = trackPerformance(
+    'convertToWebP',
+    async (
+      file: FileItem,
+      quality: number,
+      globalResizeSettings: ResizeSettings,
+      updateProgress: ProgressCallback,
+      updateFile: (id: string | number, updates: Partial<FileItem>) => void
+    ): Promise<Blob> => {
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        updateProgress(10);
+
+        const blobUrl = URL.createObjectURL(file.file);
+
+        img.onload = () => {
+          try {
+            URL.revokeObjectURL(blobUrl);
+
+            updateProgress(20);
+
+            const MAX_CANVAS_DIMENSION = 16384;
+            if (
+              img.width > MAX_CANVAS_DIMENSION ||
+              img.height > MAX_CANVAS_DIMENSION
+            ) {
+              reject(
+                new Error(
+                  `Image dimensions too large. Maximum ${MAX_CANVAS_DIMENSION}x${MAX_CANVAS_DIMENSION} pixels.`
+                )
+              );
+              return;
+            }
+
+            updateProgress(30);
+
+            const originalDimensions = { width: img.width, height: img.height };
+
+            const effectiveResizeSettings = file.resizeSettings?.enabled
+              ? file.resizeSettings
+              : globalResizeSettings;
+
+            const finalDimensions = this.calculateResizeDimensions(
+              img.width,
+              img.height,
+              effectiveResizeSettings
+            );
+
+            updateFile(file.id, { originalDimensions, finalDimensions });
+
+            updateProgress(50);
+
+            canvas.width = finalDimensions.width;
+            canvas.height = finalDimensions.height;
+
+            updateProgress(60);
+
+            ctx.drawImage(
+              img,
+              0,
+              0,
+              finalDimensions.width,
+              finalDimensions.height
+            );
+
+            updateProgress(80);
+
+            const hasTransparency =
+              file.file.type === 'image/png' ||
+              file.file.name.toLowerCase().endsWith('.png');
+            const webpQuality =
+              hasTransparency && quality > 90 ? 1.0 : quality / 100;
+
+            updateProgress(90);
+
+            canvas.toBlob(
+              blob => {
+                if (blob) {
+                  updateProgress(100);
+                  resolve(blob);
+                } else {
+                  reject(new Error('Failed to create WebP blob'));
+                }
+              },
+              'image/webp',
+              webpQuality
+            );
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(blobUrl);
+          reject(new Error('Failed to load image'));
+        };
+
+        img.src = blobUrl;
+      });
+    }
+  );
+
+  static validateFile(file: File): {
+    isValid: boolean;
+    error?: string;
+    warning?: string;
+  } {
+    // Check if it's a video file first
+    if (file.type.startsWith('video/')) {
+      return VideoConversionService.validateVideoFile(file);
+    }
+
+    // Original image validation
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB limit for images
+
+    if (file.size > MAX_FILE_SIZE) {
+      return {
+        isValid: false,
+        error: `File "${file.name}" is too large. Maximum file size is 50MB for images.`,
+      };
+    }
+
+    const isImage = file.type.startsWith('image/');
+    const isSupported = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/bmp',
+      'image/webp',
+    ].includes(file.type.toLowerCase());
+
+    if (!isImage || !isSupported) {
+      return {
+        isValid: false,
+        error: `File "${file.name}" is not a supported image format.`,
+      };
+    }
+
+    return { isValid: true };
+  }
+
+  static async createFileItem(file: File): Promise<FileItem> {
+    const isVideo = file.type.startsWith('video/');
+    let preview = URL.createObjectURL(file);
+
+    // For videos, try to generate a thumbnail
+    if (isVideo) {
+      try {
+        preview = await VideoConversionService.getVideoThumbnail(file);
+      } catch (error) {
+        console.warn('Could not generate video thumbnail:', error);
+        // Keep the video file URL as fallback
+      }
+    }
+
+    return {
+      id: crypto.randomUUID?.() || Date.now() + Math.random(),
+      file,
+      name: file.name,
+      size: file.size,
+      preview,
+      status: 'pending',
+      progress: 0,
+      convertedBlob: null,
+      convertedSize: null,
+      convertedPreview: null,
+      resizeSettings: { enabled: false, maxWidth: 2048, maxHeight: 2048 },
+      videoSettings: {
+        resolution: 'default',
+        crf: 28,
+        fps: 'default',
+        audioEnabled: true,
+      },
+      isVideo,
+    };
+  }
+
+  static formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  static getSavingsPercentage(original: number, converted: number): number {
+    if (!original || !converted) return 0;
+    return Math.round(((original - converted) / original) * 100);
+  }
+
+  static sanitizeFilename(filename: string): string {
+    return filename.replace(/[<>:"/\\|?*]/g, '_').replace(/^\.+/, '');
+  }
+}

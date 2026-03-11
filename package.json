@@ -1,0 +1,52 @@
+{
+  "name": "web-media-converter",
+  "private": true,
+  "version": "2.9.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:check": "npm run type-check && vite build",
+    "build:netlify": "npm ci --legacy-peer-deps && npm run build",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist",
+    "build:profile": "vite build --mode production --profile",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "perf:preview": "npm run build && npm run preview"
+  },
+  "dependencies": {
+    "@awesome.me/kit-c9f4d240a1": "^1.0.2",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.1",
+    "@headlessui/react": "^2.2.9",
+    "@sentry/react": "^10.43.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@sentry/vite-plugin": "^5.1.1",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^25.0.1",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "prettier": "^3.7.4",
+    "tailwindcss": "^4.1.18",
+    "terser": "^5.44.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.7",
+    "vitest": "^4.0.18"
+  }
+}

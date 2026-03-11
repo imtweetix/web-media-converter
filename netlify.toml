@@ -1,0 +1,38 @@
+[build]
+  publish = "dist"
+  command = "npm ci --legacy-peer-deps && npm run build"
+  ignore = "git diff --quiet HEAD^ HEAD -- . ':(exclude)netlify.toml'"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Only build from production branch
+[context.production]
+  command = "npm ci --legacy-peer-deps && npm run build"
+
+# Prevent all other branches from building
+[context.deploy-preview]
+  command = "echo 'Skipping preview deploy' && exit 0"
+
+[context.branch-deploy]
+  command = "echo 'Skipping branch deploy' && exit 0"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' blob: data: https://www.google-analytics.com; media-src 'self' blob: data:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com https://www.google-analytics.com https://analytics.google.com https://cdn.jsdelivr.net https://*.ingest.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
