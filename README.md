@@ -432,15 +432,15 @@ For performance analysis, use browser-based tools:
 
 ## 📌 Version
 
-**Current Version:** `2.9.0` - Released March 11, 2026
+**Current Version:** `2.10.0` - Released March 12, 2026
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 
-### Recent Highlights (v2.6.1–2.9.0)
+### Recent Highlights (v2.7.0–2.10.0)
+- **FFmpeg Fixes & Conversion Cancellation** (v2.10.0): Fixed FFmpeg WASM loading (ESM core), VP9 encoding optimization, file re-upload fix, per-file conversion cancellation with abort support
 - **Test Infrastructure** (v2.9.0): Vitest test suite with 51 tests covering file validation, utility functions, CRC32, and video validation
 - **Sentry Error Monitoring** (v2.8.0): SDK integration, React ErrorBoundary, structured error reporting with source map uploads
 - **FFmpeg.wasm Video Engine** (v2.7.0): Faster-than-real-time VP9 transcoding with true CRF quality control, service worker WASM caching, automatic MediaRecorder fallback
-- **Bug Fixes** (v2.6.1–2.6.4): CSP production fix, ZIP entry count and duplicate filename fixes, video audio muted during conversion, image conversion performance improvements
 
 ---
 

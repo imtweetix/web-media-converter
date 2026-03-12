@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.0] - 2026-03-12
+
+### Fixed
+- **FFmpeg WASM Loading**: Resolved "failed to import ffmpeg-core.js" error by switching from UMD to ESM distribution of `@ffmpeg/core`. Vite creates module workers that use `import()` instead of `importScripts()`, requiring the ESM build.
+- **VP9 Encoding Stalls**: Added `-deadline good -cpu-used 4` encoding flags to prevent single-threaded WASM VP9 encoding from appearing stuck on first conversion. Industry-standard settings (used by YouTube/Netflix) with negligible quality impact.
+- **File Re-upload**: Fixed issue where clearing files and re-selecting the same files via "Choose Files" would not trigger upload. Input value is now reset after each selection.
+- **CSP for FFmpeg**: Added `https://cdn.jsdelivr.net` to `script-src` across all three CSP locations to allow ESM dynamic import of ffmpeg-core.js in module workers.
+
+### Added
+- **Conversion Cancellation**: Per-file AbortController allows removing a file mid-conversion without blocking the conversion loop. Remaining files continue converting automatically.
+- **FFmpeg WASM Preloading**: FFmpeg WASM is now preloaded on app startup so the first video conversion starts immediately without download delay.
+- **Conversion Timeout**: FFmpeg exec has a timeout (5 minutes minimum or 10x video duration) to prevent indefinite hangs.
+
+### Changed
+- **FFmpeg CDN URLs**: Switched from blob URLs to direct CDN URLs for both ffmpeg-core.js and ffmpeg-core.wasm, avoiding CSP `connect-src` issues with blob URL fetching.
+- **Service Worker Cache**: Updated to v3 with ESM URLs, removed unused worker URL from cache list.
+- **Abort Signal Propagation**: Signal checks added throughout the video conversion pipeline (metadata probing, file writing, exec) for fast cancellation at any stage.
+- **MediaRecorder Fallback**: AbortError is now re-thrown instead of silently falling through to the MediaRecorder fallback encoder.
+- **FFmpeg Termination on Abort**: When a conversion is cancelled, the ffmpeg worker is terminated immediately rather than waiting for the still-running exec to complete. A fresh instance is lazily created for the next conversion.
+
 ## [2.9.0] - 2026-03-11
 
 ### Added
@@ -608,4 +628,4 @@ This is a major version release that transforms the WebP Image Converter into a 
 See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines on contributing to this project.
 
 ### License
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
+This project is licensed under a Proprietary License - see [LICENSE](LICENSE) for details.
