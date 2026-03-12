@@ -102,7 +102,7 @@ export default defineConfig({
     host: true,
     headers: {
       'Content-Security-Policy':
-        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' blob: data: https://www.google-analytics.com; media-src 'self' blob: data:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com https://www.google-analytics.com https://analytics.google.com https://cdn.jsdelivr.net https://*.ingest.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';",
+        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' blob: data: https://www.google-analytics.com; media-src 'self' blob: data:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com https://www.google-analytics.com https://analytics.google.com https://cdn.jsdelivr.net https://*.ingest.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';",
     },
   },
   preview: {
