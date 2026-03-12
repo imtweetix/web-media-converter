@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)",
+      "Bash(cd \"D:/Web/Web Media Converter\" && \"/c/Program Files/GitHub CLI/gh.exe\" release create v1.2.1 --target main --title \"v1.2.1 - Footer Component\" --notes \"$\\(cat <<'NOTES'\n## 📄 Footer Component\n\n### Added\n- Copyright notice and attribution footer\n- Dynamic year display \\(automatically updates to current year\\)\n- Link to creator's GitHub profile\n- Professional styling with rounded corners and shadow\nNOTES\n\\)\" 2>&1)",
+      "Bash(cd \"D:/Web/Web Media Converter\" && \"/c/Program Files/GitHub CLI/gh.exe\" release create v2.0.0 --target main --title \"v2.0.0 - Video Conversion Support\" --notes \"$\\(cat <<'NOTES'\n## 🎬 MAJOR RELEASE: Video Conversion Support\n\nThis major release transforms the WebP Image Converter into a unified **WebP & WebM Media Converter**.\n\n### Added\n- **Video to WebM Conversion**: Complete video conversion pipeline\n  - Support for MP4, AVI, MOV, WMV, 3GP, OGV input formats\n  - WebM output with VP8 codec and configurable bitrate\n  - Browser-based conversion using MediaRecorder API\n  - 500MB maximum file size limit for videos\n- **Video Conversion Settings**: Bitrate control, audio inclusion toggle\n- **Video Thumbnail Generation**: Automatic preview thumbnails\n- **Unified File Handling**: Single upload area for both images and videos\n- **Enhanced File Validation**: Separate validation logic for images vs videos\n\n### Breaking Changes\n- App rebranded from image-only to media converter\n- Enhanced component interfaces for video support\nNOTES\n\\)\" 2>&1)"
+    ]
+  }
+}

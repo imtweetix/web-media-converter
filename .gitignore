@@ -14,7 +14,6 @@ dist-ssr
 *.local
 
 # Editor directories and files
-.claude/
 .vscode/
 .idea
 .DS_Store
@@ -23,8 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-GITHUB_CHECKLIST.md
-CLAUDE.md
 
 # Environment
 .env
