@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.1] - 2026-03-12
+
+### Fixed
+- **Google Analytics 4 CSP Blocking**: GA4 sends data to regional endpoints like `region1.google-analytics.com`, but CSP `connect-src` only allowed exact domain `www.google-analytics.com`. Updated all three CSP locations (index.html, vite.config.ts, netlify.toml) to use wildcard subdomains (`https://*.google-analytics.com`, `https://*.analytics.google.com`, `https://*.googletagmanager.com`) so GA4 hits are no longer silently blocked.
+
 ## [2.10.0] - 2026-03-12
 
 ### Fixed

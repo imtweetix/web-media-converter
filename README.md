@@ -432,11 +432,12 @@ For performance analysis, use browser-based tools:
 
 ## 📌 Version
 
-**Current Version:** `2.10.0` - Released March 12, 2026
+**Current Version:** `2.10.1` - Released March 12, 2026
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 
-### Recent Highlights (v2.7.0–2.10.0)
+### Recent Highlights (v2.7.0–2.10.1)
+- **GA4 & CSP Fix** (v2.10.1): Fixed Google Analytics 4 CSP blocking — wildcard subdomains for GA4 regional endpoints
 - **FFmpeg Fixes & Conversion Cancellation** (v2.10.0): Fixed FFmpeg WASM loading (ESM core), VP9 encoding optimization, file re-upload fix, per-file conversion cancellation with abort support
 - **Test Infrastructure** (v2.9.0): Vitest test suite with 51 tests covering file validation, utility functions, CRC32, and video validation
 - **Sentry Error Monitoring** (v2.8.0): SDK integration, React ErrorBoundary, structured error reporting with source map uploads
