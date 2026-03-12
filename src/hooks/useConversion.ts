@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ConversionService } from '../services/conversionService';
 import {
   FFmpegLoadState,
@@ -18,12 +18,15 @@ import { trackConversion, trackConversionError } from '../utils/analytics';
 // Retry mechanism for failed conversions
 const convertWithRetry = async (
   convertFn: () => Promise<Blob>,
-  maxRetries: number = 2
+  maxRetries: number = 2,
+  signal?: AbortSignal
 ): Promise<Blob> => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    signal?.throwIfAborted();
     try {
       return await convertFn();
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
       if (attempt === maxRetries) throw error;
       // Exponential backoff
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
@@ -38,6 +41,11 @@ export function useConversion() {
   const [ffmpegState, setFfmpegState] = useState<FFmpegLoadState>('idle');
   const [ffmpegLoadProgress, setFfmpegLoadProgress] = useState<number>(0);
 
+  // Track abort controllers for active conversions, keyed by file ID
+  const activeConversionsRef = useRef<Map<string | number, AbortController>>(
+    new Map()
+  );
+
   useEffect(() => {
     const unsubState = onFFmpegStateChange(setFfmpegState);
     const unsubProgress = onFFmpegLoadProgress(setFfmpegLoadProgress);
@@ -45,6 +53,22 @@ export function useConversion() {
       unsubState();
       unsubProgress();
     };
+  }, []);
+
+  // Cancel a specific file's conversion — the loop continues to the next file
+  const cancelFileConversion = useCallback((id: string | number) => {
+    const controller = activeConversionsRef.current.get(id);
+    if (controller) {
+      controller.abort();
+      activeConversionsRef.current.delete(id);
+    }
+  }, []);
+
+  // Cancel all active conversions
+  const cancelAllConversions = useCallback(() => {
+    activeConversionsRef.current.forEach(controller => controller.abort());
+    activeConversionsRef.current.clear();
+    setIsConverting(false);
   }, []);
 
   const convertAllFiles = useCallback(
@@ -70,8 +94,16 @@ export function useConversion() {
 
       // Helper to convert a single file
       const convertSingleFile = async (file: FileItem) => {
+        // Create an AbortController for this file's conversion
+        const abortController = new AbortController();
+        activeConversionsRef.current.set(file.id, abortController);
+        const { signal } = abortController;
+
         try {
+          signal.throwIfAborted();
+
           const updateProgress: ProgressCallback = (progress: number) => {
+            if (signal.aborted) return;
             updateFile(file.id, { progress, status: 'converting' });
           };
 
@@ -85,7 +117,8 @@ export function useConversion() {
                 file,
                 effectiveVideoSettings,
                 updateProgress,
-                updateFile
+                updateFile,
+                signal
               );
             } else {
               // Use image conversion with individual quality if set, otherwise global
@@ -101,11 +134,12 @@ export function useConversion() {
             }
           };
 
-          const convertedBlob = await convertWithRetry(convertFn);
+          const convertedBlob = await convertWithRetry(convertFn, 2, signal);
+
+          // Don't update state if aborted
+          if (signal.aborted) return;
 
           if (convertedBlob) {
-            // For images, create a preview from the blob
-            // For videos, the preview is generated in the conversion service
             const updates: Partial<FileItem> = {
               status: 'converted',
               progress: 100,
@@ -113,14 +147,12 @@ export function useConversion() {
               convertedSize: convertedBlob.size,
             };
 
-            // Only set convertedPreview for images (videos handle it in their service)
             if (!file.isVideo) {
               updates.convertedPreview = URL.createObjectURL(convertedBlob);
             }
 
             updateFile(file.id, updates);
 
-            // Track successful conversion
             trackConversion(
               file.isVideo ? 'video' : 'image',
               file.file.size,
@@ -130,6 +162,14 @@ export function useConversion() {
             updateFile(file.id, { status: 'error', progress: 0 });
           }
         } catch (error) {
+          // Silently skip aborted conversions
+          if (
+            error instanceof DOMException &&
+            error.name === 'AbortError'
+          ) {
+            return;
+          }
+
           const errorMessage =
             error instanceof Error ? error.message : 'Unknown error';
           console.error('Conversion error for file:', file.name, errorMessage);
@@ -151,8 +191,9 @@ export function useConversion() {
             errorMessage: errorMessage,
           });
 
-          // Track conversion error
           trackConversionError(file.isVideo ? 'video' : 'image', errorMessage);
+        } finally {
+          activeConversionsRef.current.delete(file.id);
         }
       };
 
@@ -169,7 +210,6 @@ export function useConversion() {
           const batch = imageFiles.slice(i, i + IMAGE_CONCURRENT_LIMIT);
           await Promise.all(batch.map(convertSingleFile));
 
-          // Small delay between batches to prevent overwhelming the browser
           if (i + IMAGE_CONCURRENT_LIMIT < imageFiles.length) {
             await new Promise(resolve => setTimeout(resolve, 100));
           }
@@ -189,6 +229,8 @@ export function useConversion() {
   return {
     isConverting,
     convertAllFiles,
+    cancelFileConversion,
+    cancelAllConversions,
     ffmpegState,
     ffmpegLoadProgress,
   };

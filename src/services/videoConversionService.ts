@@ -288,7 +288,8 @@ export class VideoConversionService {
     file: FileItem,
     videoSettings: VideoSettings,
     updateProgress: ProgressCallback,
-    updateFile: (id: string | number, updates: Partial<FileItem>) => void
+    updateFile: (id: string | number, updates: Partial<FileItem>) => void,
+    signal?: AbortSignal
   ): Promise<Blob> {
     // Try ffmpeg.wasm first unless permanently failed
     if (!isFFmpegPermanentlyFailed()) {
@@ -297,9 +298,15 @@ export class VideoConversionService {
           file,
           videoSettings,
           updateProgress,
-          updateFile
+          updateFile,
+          signal
         );
       } catch (error) {
+        // Re-throw abort errors — don't fall back to MediaRecorder
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          throw error;
+        }
+
         console.warn(
           'ffmpeg.wasm conversion failed, falling back to MediaRecorder:',
           error
@@ -335,18 +342,23 @@ export class VideoConversionService {
     file: FileItem,
     videoSettings: VideoSettings,
     updateProgress: ProgressCallback,
-    updateFile: (id: string | number, updates: Partial<FileItem>) => void
+    updateFile: (id: string | number, updates: Partial<FileItem>) => void,
+    signal?: AbortSignal
   ): Promise<Blob> {
     updateProgress(5);
+    signal?.throwIfAborted();
 
     // Load ffmpeg (lazy — first call downloads WASM from CDN)
     const ffmpeg = await getFFmpeg();
 
     updateProgress(10);
+    signal?.throwIfAborted();
 
     // Probe video metadata
     const needsFpsDetect = videoSettings.fps === 'default';
     const meta = await this.probeVideoMetadata(file.file, needsFpsDetect);
+
+    signal?.throwIfAborted();
 
     const originalDimensions = { width: meta.width, height: meta.height };
     const targetDims = this.calculateTargetResolution(
@@ -373,6 +385,7 @@ export class VideoConversionService {
     const outputName = 'output.webm';
 
     await ffmpeg.writeFile(inputName, await fetchFile(file.file));
+    signal?.throwIfAborted();
     updateProgress(20);
 
     // Build ffmpeg CLI args
@@ -382,6 +395,12 @@ export class VideoConversionService {
     args.push('-c:v', 'libvpx-vp9');
     args.push('-crf', String(videoSettings.crf));
     args.push('-b:v', '0'); // Required for true CRF mode in libvpx-vp9
+
+    // Encoding speed: -deadline good with -cpu-used 4 is the industry
+    // standard (YouTube, Netflix). Negligible quality difference from the
+    // default (cpu-used 0) but 3-5x faster — critical for WASM.
+    args.push('-deadline', 'good');
+    args.push('-cpu-used', '4');
 
     // Resolution scaling
     if (
@@ -423,8 +442,9 @@ export class VideoConversionService {
     ffmpeg.on('progress', progressHandler);
 
     try {
-      // Execute ffmpeg
-      await ffmpeg.exec(args);
+      // Execute ffmpeg with timeout (5 minutes max) and abort signal
+      const timeoutMs = Math.max(300000, (meta.duration || 60) * 10000);
+      await ffmpeg.exec(args, timeoutMs, { signal });
 
       // Read output
       const outputData = await ffmpeg.readFile(outputName);
@@ -445,16 +465,24 @@ export class VideoConversionService {
     } finally {
       ffmpeg.off('progress', progressHandler);
 
-      // Clean up virtual FS
-      try {
-        await ffmpeg.deleteFile(inputName);
-      } catch {
-        /* already cleaned */
-      }
-      try {
-        await ffmpeg.deleteFile(outputName);
-      } catch {
-        /* already cleaned */
+      if (signal?.aborted) {
+        // Terminate the ffmpeg instance to force-stop the worker.
+        // A new instance will be lazily created on the next conversion.
+        const { terminateFFmpeg } = await import('./ffmpegLoader');
+        terminateFFmpeg();
+      } else {
+        // Clean up virtual FS only when not aborted (deleteFile would
+        // block until the worker finishes the still-running exec)
+        try {
+          await ffmpeg.deleteFile(inputName);
+        } catch {
+          /* already cleaned */
+        }
+        try {
+          await ffmpeg.deleteFile(outputName);
+        } catch {
+          /* already cleaned */
+        }
       }
     }
   }

@@ -23,6 +23,10 @@ export function UploadArea({ onFilesSelected }: UploadAreaProps) {
         onFilesSelected(files);
       }
     }
+    // Reset input value so re-selecting the same files triggers onChange
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (

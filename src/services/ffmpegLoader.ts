@@ -140,3 +140,16 @@ export function terminateFFmpeg(): void {
   loadPromise = null;
   setState('idle');
 }
+
+/**
+ * Preload FFmpeg WASM in the background so it's ready when the user
+ * starts their first video conversion. Called on app startup.
+ */
+export function preloadFFmpeg(): void {
+  // Don't preload if already loaded or permanently failed
+  if (loadState === 'ready' || permanentlyFailed) return;
+
+  loadFFmpeg().catch(() => {
+    // Preload failure is non-fatal — conversion will retry on demand
+  });
+}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ConversionSettings,
   FilesList,
@@ -8,6 +8,7 @@ import {
   UploadArea,
 } from './components/features';
 import { useConversion, useDownload, useFileManager } from './hooks';
+import { preloadFFmpeg } from './services/ffmpegLoader';
 import { ResizeSettings, VideoSettings } from './types';
 import { trackPerformance } from './utils/performanceUtils';
 import { trackSettingChange } from './utils/analytics';
@@ -29,6 +30,11 @@ function App() {
     }
   );
 
+  // Preload FFmpeg WASM in the background so first video conversion is fast
+  useEffect(() => {
+    preloadFFmpeg();
+  }, []);
+
   const {
     files,
     addFiles,
@@ -40,9 +46,36 @@ function App() {
     applyGlobalResizeToAll,
   } = useFileManager();
 
-  const { isConverting, convertAllFiles, ffmpegState, ffmpegLoadProgress } =
-    useConversion();
+  const {
+    isConverting,
+    convertAllFiles,
+    cancelFileConversion,
+    cancelAllConversions,
+    ffmpegState,
+    ffmpegLoadProgress,
+  } = useConversion();
   const { isCreatingZip, downloadFile, downloadAll } = useDownload();
+
+  const handleRemoveFile = useCallback(
+    (id: string | number) => {
+      cancelFileConversion(id);
+      removeFile(id);
+
+      // If no other files remain that are converting or pending, stop entirely
+      const hasRemainingWork = files.some(
+        f => f.id !== id && (f.status === 'converting' || f.status === 'pending')
+      );
+      if (!hasRemainingWork) {
+        cancelAllConversions();
+      }
+    },
+    [cancelFileConversion, removeFile, files, cancelAllConversions]
+  );
+
+  const handleClearAll = useCallback(() => {
+    cancelAllConversions();
+    clearAllFiles();
+  }, [cancelAllConversions, clearAllFiles]);
 
   const handleQualityChange = useCallback((newQuality: number) => {
     setQuality(newQuality);
@@ -151,8 +184,8 @@ function App() {
             ffmpegLoadProgress={ffmpegLoadProgress}
             onConvertAll={handleConvertAll}
             onDownloadAll={handleDownloadAll}
-            onClearAll={clearAllFiles}
-            onRemoveFile={removeFile}
+            onClearAll={handleClearAll}
+            onRemoveFile={handleRemoveFile}
             onDownloadFile={downloadFile}
             onUpdateResizeSettings={updateFileResizeSettings}
             onUpdateVideoSettings={updateFileVideoSettings}
