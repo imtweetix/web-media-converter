@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@awesome.me/kit-c9f4d240a1": "^1.0.2",
-    "@ffmpeg/ffmpeg": "^0.12.10",
-    "@ffmpeg/util": "^0.12.1",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.1",
     "@headlessui/react": "^2.2.9",

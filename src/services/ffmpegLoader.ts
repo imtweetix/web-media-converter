@@ -9,6 +9,7 @@ type ProgressCallback = (progress: number) => void;
 
 const CORE_VERSION = '0.12.10';
 const CDN_BASE = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${CORE_VERSION}/dist/umd`;
+const FFMPEG_WORKER_URL = `https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/814.ffmpeg.js`;
 
 let ffmpegInstance: FFmpeg | null = null;
 let loadState: FFmpegLoadState = 'idle';
@@ -69,17 +70,21 @@ async function loadFFmpeg(): Promise<FFmpeg> {
         `${CDN_BASE}/ffmpeg-core.js`,
         'text/javascript'
       );
-      reportProgress(40);
+      reportProgress(30);
 
       const wasmURL = await toBlobURL(
         `${CDN_BASE}/ffmpeg-core.wasm`,
         'application/wasm'
       );
+      reportProgress(60);
+
+      const workerURL = await toBlobURL(FFMPEG_WORKER_URL, 'text/javascript');
       reportProgress(80);
 
       await ffmpeg.load({
         coreURL,
         wasmURL,
+        workerURL,
       });
 
       reportProgress(100);
@@ -89,6 +94,7 @@ async function loadFFmpeg(): Promise<FFmpeg> {
       return ffmpeg;
     } catch (error) {
       loadPromise = null;
+      console.error('FFmpeg load failed:', error);
 
       // Mark permanently failed for WebAssembly compile errors
       if (
