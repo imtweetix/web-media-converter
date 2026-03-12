@@ -1,6 +1,5 @@
 import * as Sentry from '@sentry/react';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { toBlobURL } from '@ffmpeg/util';
 
 export type FFmpegLoadState = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -8,8 +7,7 @@ type StateChangeCallback = (state: FFmpegLoadState) => void;
 type ProgressCallback = (progress: number) => void;
 
 const CORE_VERSION = '0.12.10';
-const CDN_BASE = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${CORE_VERSION}/dist/umd`;
-const FFMPEG_WORKER_URL = `https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/814.ffmpeg.js`;
+const CDN_BASE = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${CORE_VERSION}/dist/esm`;
 
 let ffmpegInstance: FFmpeg | null = null;
 let loadState: FFmpegLoadState = 'idle';
@@ -65,26 +63,19 @@ async function loadFFmpeg(): Promise<FFmpeg> {
 
       reportProgress(10);
 
-      // Convert CDN URLs to blob URLs (avoids CORS issues with WASM)
-      const coreURL = await toBlobURL(
-        `${CDN_BASE}/ffmpeg-core.js`,
-        'text/javascript'
-      );
-      reportProgress(30);
+      // Use direct CDN URLs (Vite creates module workers which use
+      // dynamic import() — blob URLs cause CSP connect-src issues)
+      const coreURL = `${CDN_BASE}/ffmpeg-core.js`;
+      reportProgress(20);
 
-      const wasmURL = await toBlobURL(
-        `${CDN_BASE}/ffmpeg-core.wasm`,
-        'application/wasm'
-      );
+      const wasmURL = `${CDN_BASE}/ffmpeg-core.wasm`;
       reportProgress(60);
 
-      const workerURL = await toBlobURL(FFMPEG_WORKER_URL, 'text/javascript');
       reportProgress(80);
 
       await ffmpeg.load({
         coreURL,
         wasmURL,
-        workerURL,
       });
 
       reportProgress(100);
