@@ -13,7 +13,7 @@ export function Footer() {
         </p>
         <p className='text-center text-xs text-gray-500 leading-6'>
           <a
-            href='https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md'
+            href='https://github.com/imtweetix/web-media-converter/releases'
             target='_blank'
             rel='noopener noreferrer'
             className='text-indigo-600 hover:text-indigo-800 transition-colors'
