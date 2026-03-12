@@ -1,13 +1,13 @@
-import * as Sentry from "@sentry/react";
-import { fetchFile } from "@ffmpeg/util";
-import { FileItem, VideoSettings, ProgressCallback } from "../types";
-import { getFFmpeg, isFFmpegPermanentlyFailed } from "./ffmpegLoader";
+import * as Sentry from '@sentry/react';
+import { fetchFile } from '@ffmpeg/util';
+import { FileItem, VideoSettings, ProgressCallback } from '../types';
+import { getFFmpeg, isFFmpegPermanentlyFailed } from './ffmpegLoader';
 
 export class VideoConversionService {
   // Helper function to convert CRF to approximate bitrate
   private static crfToBitrate(
     crf: number,
-    resolution: { width: number; height: number },
+    resolution: { width: number; height: number }
   ): number {
     // More conservative bitrate calculation for smaller file sizes
     // Lower CRF = higher quality = higher bitrate
@@ -40,13 +40,13 @@ export class VideoConversionService {
   private static calculateTargetResolution(
     originalWidth: number,
     originalHeight: number,
-    videoSettings: VideoSettings,
+    videoSettings: VideoSettings
   ): { width: number; height: number } {
-    if (videoSettings.resolution === "default") {
+    if (videoSettings.resolution === 'default') {
       return { width: originalWidth, height: originalHeight };
     }
 
-    if (videoSettings.resolution === "custom") {
+    if (videoSettings.resolution === 'custom') {
       if (videoSettings.customWidth && videoSettings.customHeight) {
         return {
           width: videoSettings.customWidth,
@@ -58,7 +58,7 @@ export class VideoConversionService {
     }
 
     // Parse standard resolution (e.g., "1920x1080")
-    const [width, height] = videoSettings.resolution.split("x").map(Number);
+    const [width, height] = videoSettings.resolution.split('x').map(Number);
 
     // Calculate aspect ratio preserving dimensions
     const originalAspectRatio = originalWidth / originalHeight;
@@ -81,7 +81,7 @@ export class VideoConversionService {
 
   // Helper function to detect video FPS
   private static detectVideoFPS(video: HTMLVideoElement): Promise<number> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       let lastTimestamp = 0;
       let frameCount = 0;
       let measurementStarted = false;
@@ -130,7 +130,7 @@ export class VideoConversionService {
         frameCount++;
 
         // Use requestVideoFrameCallback if available, otherwise setTimeout
-        if ("requestVideoFrameCallback" in video) {
+        if ('requestVideoFrameCallback' in video) {
           video.requestVideoFrameCallback(updateFps);
         } else {
           // Fallback for browsers without requestVideoFrameCallback
@@ -148,7 +148,7 @@ export class VideoConversionService {
         video
           .play()
           .then(() => {
-            if ("requestVideoFrameCallback" in video) {
+            if ('requestVideoFrameCallback' in video) {
               video.requestVideoFrameCallback(updateFps);
             } else {
               updateFps(performance.now());
@@ -164,7 +164,7 @@ export class VideoConversionService {
       if (video.readyState >= 2) {
         startDetection();
       } else {
-        video.addEventListener("canplay", startDetection, { once: true });
+        video.addEventListener('canplay', startDetection, { once: true });
       }
 
       // Timeout after 3 seconds
@@ -183,7 +183,7 @@ export class VideoConversionService {
    */
   private static probeVideoMetadata(
     file: File,
-    detectFps: boolean,
+    detectFps: boolean
   ): Promise<{
     width: number;
     height: number;
@@ -191,15 +191,15 @@ export class VideoConversionService {
     fps: number;
   }> {
     return new Promise((resolve, reject) => {
-      const video = document.createElement("video");
+      const video = document.createElement('video');
       video.muted = true;
-      video.preload = "metadata";
+      video.preload = 'metadata';
 
       let blobUrl: string | null = null;
 
       const cleanup = () => {
         video.pause();
-        video.removeAttribute("src");
+        video.removeAttribute('src');
         video.load();
         if (blobUrl) {
           URL.revokeObjectURL(blobUrl);
@@ -209,7 +209,7 @@ export class VideoConversionService {
 
       const timeout = setTimeout(() => {
         cleanup();
-        reject(new Error("Video metadata probe timed out"));
+        reject(new Error('Video metadata probe timed out'));
       }, 10000);
 
       video.onloadedmetadata = async () => {
@@ -219,8 +219,8 @@ export class VideoConversionService {
             cleanup();
             reject(
               new Error(
-                "Video has zero dimensions — may be corrupted or unsupported",
-              ),
+                'Video has zero dimensions — may be corrupted or unsupported'
+              )
             );
             return;
           }
@@ -253,7 +253,7 @@ export class VideoConversionService {
       video.onerror = () => {
         clearTimeout(timeout);
         cleanup();
-        reject(new Error("Failed to load video for metadata probing"));
+        reject(new Error('Failed to load video for metadata probing'));
       };
 
       try {
@@ -262,7 +262,7 @@ export class VideoConversionService {
       } catch {
         clearTimeout(timeout);
         cleanup();
-        reject(new Error("Failed to create blob URL for video"));
+        reject(new Error('Failed to create blob URL for video'));
       }
     });
   }
@@ -288,7 +288,7 @@ export class VideoConversionService {
     file: FileItem,
     videoSettings: VideoSettings,
     updateProgress: ProgressCallback,
-    updateFile: (id: string | number, updates: Partial<FileItem>) => void,
+    updateFile: (id: string | number, updates: Partial<FileItem>) => void
   ): Promise<Blob> {
     // Try ffmpeg.wasm first unless permanently failed
     if (!isFFmpegPermanentlyFailed()) {
@@ -297,24 +297,24 @@ export class VideoConversionService {
           file,
           videoSettings,
           updateProgress,
-          updateFile,
+          updateFile
         );
       } catch (error) {
         console.warn(
-          "ffmpeg.wasm conversion failed, falling back to MediaRecorder:",
-          error,
+          'ffmpeg.wasm conversion failed, falling back to MediaRecorder:',
+          error
         );
         Sentry.captureMessage(
-          "ffmpeg.wasm failed, falling back to MediaRecorder",
+          'ffmpeg.wasm failed, falling back to MediaRecorder',
           {
-            level: "warning",
+            level: 'warning',
             extra: {
               fileName: file.name,
               fileType: file.file.type,
               fileSize: file.file.size,
               error: error instanceof Error ? error.message : String(error),
             },
-          },
+          }
         );
       }
     }
@@ -324,7 +324,7 @@ export class VideoConversionService {
       file,
       videoSettings,
       updateProgress,
-      updateFile,
+      updateFile
     );
   }
 
@@ -335,7 +335,7 @@ export class VideoConversionService {
     file: FileItem,
     videoSettings: VideoSettings,
     updateProgress: ProgressCallback,
-    updateFile: (id: string | number, updates: Partial<FileItem>) => void,
+    updateFile: (id: string | number, updates: Partial<FileItem>) => void
   ): Promise<Blob> {
     updateProgress(5);
 
@@ -345,14 +345,14 @@ export class VideoConversionService {
     updateProgress(10);
 
     // Probe video metadata
-    const needsFpsDetect = videoSettings.fps === "default";
+    const needsFpsDetect = videoSettings.fps === 'default';
     const meta = await this.probeVideoMetadata(file.file, needsFpsDetect);
 
     const originalDimensions = { width: meta.width, height: meta.height };
     const targetDims = this.calculateTargetResolution(
       meta.width,
       meta.height,
-      videoSettings,
+      videoSettings
     );
     const finalDimensions = this.makeEven(targetDims);
 
@@ -366,22 +366,22 @@ export class VideoConversionService {
 
     // Determine FPS
     const targetFps =
-      videoSettings.fps === "default" ? meta.fps : parseInt(videoSettings.fps);
+      videoSettings.fps === 'default' ? meta.fps : parseInt(videoSettings.fps);
 
     // Write input file to virtual FS
-    const inputName = "input" + this.getExtension(file.file.name);
-    const outputName = "output.webm";
+    const inputName = 'input' + this.getExtension(file.file.name);
+    const outputName = 'output.webm';
 
     await ffmpeg.writeFile(inputName, await fetchFile(file.file));
     updateProgress(20);
 
     // Build ffmpeg CLI args
-    const args: string[] = ["-i", inputName];
+    const args: string[] = ['-i', inputName];
 
     // Video codec: VP9 with true CRF
-    args.push("-c:v", "libvpx-vp9");
-    args.push("-crf", String(videoSettings.crf));
-    args.push("-b:v", "0"); // Required for true CRF mode in libvpx-vp9
+    args.push('-c:v', 'libvpx-vp9');
+    args.push('-crf', String(videoSettings.crf));
+    args.push('-b:v', '0'); // Required for true CRF mode in libvpx-vp9
 
     // Resolution scaling
     if (
@@ -389,21 +389,21 @@ export class VideoConversionService {
       finalDimensions.height !== meta.height
     ) {
       args.push(
-        "-vf",
-        `scale=${finalDimensions.width}:${finalDimensions.height}`,
+        '-vf',
+        `scale=${finalDimensions.width}:${finalDimensions.height}`
       );
     }
 
     // FPS
-    if (videoSettings.fps !== "default") {
-      args.push("-r", String(targetFps));
+    if (videoSettings.fps !== 'default') {
+      args.push('-r', String(targetFps));
     }
 
     // Audio
     if (videoSettings.audioEnabled) {
-      args.push("-c:a", "libvorbis", "-q:a", "4");
+      args.push('-c:a', 'libvorbis', '-q:a', '4');
     } else {
-      args.push("-an");
+      args.push('-an');
     }
 
     args.push(outputName);
@@ -420,7 +420,7 @@ export class VideoConversionService {
       const uiProgress = Math.round(20 + clampedProgress * 75);
       updateProgress(uiProgress);
     };
-    ffmpeg.on("progress", progressHandler);
+    ffmpeg.on('progress', progressHandler);
 
     try {
       // Execute ffmpeg
@@ -428,7 +428,7 @@ export class VideoConversionService {
 
       // Read output
       const outputData = await ffmpeg.readFile(outputName);
-      const webmBlob = new Blob([outputData], { type: "video/webm" });
+      const webmBlob = new Blob([outputData], { type: 'video/webm' });
 
       updateProgress(96);
 
@@ -443,7 +443,7 @@ export class VideoConversionService {
       updateProgress(100);
       return webmBlob;
     } finally {
-      ffmpeg.off("progress", progressHandler);
+      ffmpeg.off('progress', progressHandler);
 
       // Clean up virtual FS
       try {
@@ -461,8 +461,8 @@ export class VideoConversionService {
 
   /** Extract file extension including the dot, e.g. ".mp4" */
   private static getExtension(filename: string): string {
-    const idx = filename.lastIndexOf(".");
-    return idx >= 0 ? filename.substring(idx).toLowerCase() : ".mp4";
+    const idx = filename.lastIndexOf('.');
+    return idx >= 0 ? filename.substring(idx).toLowerCase() : '.mp4';
   }
 
   /**
@@ -473,15 +473,15 @@ export class VideoConversionService {
     file: FileItem,
     videoSettings: VideoSettings,
     updateProgress: ProgressCallback,
-    updateFile: (id: string | number, updates: Partial<FileItem>) => void,
+    updateFile: (id: string | number, updates: Partial<FileItem>) => void
   ): Promise<Blob> {
     return new Promise((resolve, reject) => {
       updateProgress(10);
 
       // Create video element to get video info
-      const video = document.createElement("video");
+      const video = document.createElement('video');
       video.muted = true;
-      video.preload = "metadata";
+      video.preload = 'metadata';
 
       video.onloadedmetadata = async () => {
         try {
@@ -491,8 +491,8 @@ export class VideoConversionService {
           if (video.videoWidth === 0 || video.videoHeight === 0) {
             reject(
               new Error(
-                `Cannot process ${file.name}. The video format may not be supported or the file may be corrupted.`,
-              ),
+                `Cannot process ${file.name}. The video format may not be supported or the file may be corrupted.`
+              )
             );
             return;
           }
@@ -508,7 +508,7 @@ export class VideoConversionService {
           const finalDimensions = this.calculateTargetResolution(
             video.videoWidth,
             video.videoHeight,
-            videoSettings,
+            videoSettings
           );
 
           updateFile(file.id, {
@@ -520,26 +520,26 @@ export class VideoConversionService {
           updateProgress(30);
 
           // Check for WebM support with fallback options
-          let mimeType = "video/webm;codecs=vp8";
+          let mimeType = 'video/webm;codecs=vp8';
           let isSupported = MediaRecorder.isTypeSupported(mimeType);
 
           if (!isSupported) {
             // Try VP9 codec
-            mimeType = "video/webm;codecs=vp9";
+            mimeType = 'video/webm;codecs=vp9';
             isSupported = MediaRecorder.isTypeSupported(mimeType);
           }
 
           if (!isSupported) {
             // Try without specifying codec
-            mimeType = "video/webm";
+            mimeType = 'video/webm';
             isSupported = MediaRecorder.isTypeSupported(mimeType);
           }
 
           if (!isSupported) {
             reject(
               new Error(
-                "WebM video encoding not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.",
-              ),
+                'WebM video encoding not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.'
+              )
             );
             return;
           }
@@ -547,11 +547,11 @@ export class VideoConversionService {
           updateProgress(40);
 
           // Create canvas for video processing
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
 
           if (!ctx) {
-            reject(new Error("Could not get canvas context"));
+            reject(new Error('Could not get canvas context'));
             return;
           }
 
@@ -562,7 +562,7 @@ export class VideoConversionService {
 
           // Determine target FPS based on settings
           let targetFps: number;
-          if (videoSettings.fps === "default") {
+          if (videoSettings.fps === 'default') {
             // Detect the actual video FPS
             updateProgress(55);
             try {
@@ -572,7 +572,7 @@ export class VideoConversionService {
               video.pause();
               video.currentTime = 0;
             } catch (error) {
-              console.warn("FPS detection failed, using 24fps default:", error);
+              console.warn('FPS detection failed, using 24fps default:', error);
               targetFps = 24; // Fallback
             }
           } else {
@@ -601,8 +601,8 @@ export class VideoConversionService {
               }
             } catch (audioError) {
               console.warn(
-                "Audio capture not available, continuing without audio:",
-                audioError,
+                'Audio capture not available, continuing without audio:',
+                audioError
               );
             }
           }
@@ -617,14 +617,14 @@ export class VideoConversionService {
 
           const chunks: Blob[] = [];
 
-          mediaRecorder.ondataavailable = (event) => {
+          mediaRecorder.ondataavailable = event => {
             if (event.data.size > 0) {
               chunks.push(event.data);
             }
           };
 
           mediaRecorder.onstop = async () => {
-            const webmBlob = new Blob(chunks, { type: "video/webm" });
+            const webmBlob = new Blob(chunks, { type: 'video/webm' });
             updateProgress(100);
 
             // Generate thumbnail for the converted video
@@ -635,8 +635,8 @@ export class VideoConversionService {
               updateFile(file.id, { convertedPreview: thumbnailUrl });
             } catch (error) {
               console.warn(
-                "Could not generate converted video thumbnail:",
-                error,
+                'Could not generate converted video thumbnail:',
+                error
               );
             }
 
@@ -649,14 +649,14 @@ export class VideoConversionService {
             resolve(webmBlob);
           };
 
-          mediaRecorder.onerror = (event) => {
+          mediaRecorder.onerror = event => {
             // Clean up blob URL on error
             if (blobUrl) {
               URL.revokeObjectURL(blobUrl);
               blobUrl = null;
             }
 
-            reject(new Error("MediaRecorder error: " + event.error));
+            reject(new Error('MediaRecorder error: ' + event.error));
           };
 
           // Start recording
@@ -674,12 +674,12 @@ export class VideoConversionService {
           const conversionTimeout = setTimeout(
             () => {
               if (isRecording) {
-                console.warn("Video conversion timed out, stopping recording");
+                console.warn('Video conversion timed out, stopping recording');
                 isRecording = false;
                 mediaRecorder.stop();
               }
             },
-            Math.max(30000, duration * 1000 * 2),
+            Math.max(30000, duration * 1000 * 2)
           ); // 30 seconds minimum, or 2x video duration
 
           let frameCount = 0;
@@ -702,7 +702,7 @@ export class VideoConversionService {
               stuckCount++;
               if (stuckCount > 100) {
                 // If stuck for 100 frames (~3 seconds at 30fps)
-                console.warn("Video appears stuck, forcing completion");
+                console.warn('Video appears stuck, forcing completion');
                 isRecording = false;
                 clearTimeout(conversionTimeout);
                 mediaRecorder.stop();
@@ -720,7 +720,7 @@ export class VideoConversionService {
                   0,
                   0,
                   finalDimensions.width,
-                  finalDimensions.height,
+                  finalDimensions.height
                 );
 
                 // Update progress based on video playback - more accurate calculation
@@ -735,7 +735,7 @@ export class VideoConversionService {
 
                 lastTime = video.currentTime;
               } catch (error) {
-                console.warn("Error drawing video frame:", error);
+                console.warn('Error drawing video frame:', error);
                 // Continue without throwing to prevent conversion from failing
               }
             }
@@ -751,8 +751,8 @@ export class VideoConversionService {
             .then(() => {
               drawFrame();
             })
-            .catch((playError) => {
-              console.warn("Video play failed:", playError);
+            .catch(playError => {
+              console.warn('Video play failed:', playError);
               // Start drawing anyway in case it's a minor issue
               drawFrame();
             });
@@ -763,13 +763,13 @@ export class VideoConversionService {
 
       video.onerror = () => {
         const fileName = file.name;
-        const fileExtension = fileName.split(".").pop()?.toLowerCase();
+        const fileExtension = fileName.split('.').pop()?.toLowerCase();
 
-        let errorMessage = "Failed to load video file.";
+        let errorMessage = 'Failed to load video file.';
 
-        if (fileExtension === "wmv") {
+        if (fileExtension === 'wmv') {
           errorMessage = `Cannot process ${fileName}. WMV files may use codecs not supported by browsers. The file will remain in your list - you can try conversion anyway, but for best results consider using MP4 or WebM format.`;
-        } else if (["mov", "mkv"].includes(fileExtension || "")) {
+        } else if (['mov', 'mkv'].includes(fileExtension || '')) {
           errorMessage = `Cannot process ${fileName}. This video format may not be fully supported by your browser. You can try conversion, but MP4 or WebM formats work more reliably.`;
         } else {
           errorMessage = `Cannot process ${fileName}. The video file may use an unsupported codec or be corrupted. You can try conversion, but the file may not be compatible.`;
@@ -785,7 +785,7 @@ export class VideoConversionService {
         blobUrl = URL.createObjectURL(file.file);
         video.src = blobUrl;
       } catch (error) {
-        reject(new Error("Failed to create blob URL for video file"));
+        reject(new Error('Failed to create blob URL for video file'));
       }
     });
   }
@@ -804,16 +804,16 @@ export class VideoConversionService {
       };
     }
 
-    const isVideo = file.type.startsWith("video/");
+    const isVideo = file.type.startsWith('video/');
 
     // Browser-native supported formats for video processing
-    const browserNativeFormats = ["video/mp4", "video/webm", "video/ogg"];
+    const browserNativeFormats = ['video/mp4', 'video/webm', 'video/ogg'];
 
     // Additional formats we can attempt to process (may have limited browser support)
-    const additionalFormats = ["video/mov", "video/quicktime", "video/3gpp"];
+    const additionalFormats = ['video/mov', 'video/quicktime', 'video/3gpp'];
 
     // Formats with known browser compatibility issues
-    const problematicFormats = ["video/x-ms-wmv", "video/x-ms-asf"];
+    const problematicFormats = ['video/x-ms-wmv', 'video/x-ms-asf'];
 
     const fileName = file.name.toLowerCase();
 
@@ -827,31 +827,31 @@ export class VideoConversionService {
 
     // Check for potentially problematic formats but still allow them
     const isProblematic = problematicFormats.some(
-      (format) =>
+      format =>
         file.type.toLowerCase() === format ||
-        fileName.endsWith(".wmv") ||
-        fileName.endsWith(".asf"),
+        fileName.endsWith('.wmv') ||
+        fileName.endsWith('.asf')
     );
 
     // We'll try to convert these files anyway - let the conversion process handle any issues
 
     // Check for browser-native support
     const isNativelySupported = browserNativeFormats.some(
-      (format) => file.type.toLowerCase() === format,
+      format => file.type.toLowerCase() === format
     );
 
     const isAdditionalSupported = additionalFormats.some(
-      (format) =>
+      format =>
         file.type.toLowerCase() === format ||
-        fileName.endsWith("." + format.split("/")[1].replace("x-", "")),
+        fileName.endsWith('.' + format.split('/')[1].replace('x-', ''))
     );
 
     // Reject AVI and WMV files explicitly
     if (
-      fileName.endsWith(".avi") ||
-      fileName.endsWith(".wmv") ||
-      file.type.toLowerCase() === "video/avi" ||
-      file.type.toLowerCase() === "video/x-msvideo" ||
+      fileName.endsWith('.avi') ||
+      fileName.endsWith('.wmv') ||
+      file.type.toLowerCase() === 'video/avi' ||
+      file.type.toLowerCase() === 'video/x-msvideo' ||
       isProblematic
     ) {
       return {
@@ -873,24 +873,24 @@ export class VideoConversionService {
 
   static getVideoThumbnailFromBlob(videoBlob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
-      const video = document.createElement("video");
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const video = document.createElement('video');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
       if (!ctx) {
-        reject(new Error("Could not get canvas context"));
+        reject(new Error('Could not get canvas context'));
         return;
       }
 
       // Set a timeout for thumbnail generation
       const timeout = setTimeout(() => {
         cleanup();
-        reject(new Error("Thumbnail generation timed out"));
+        reject(new Error('Thumbnail generation timed out'));
       }, 5000);
 
       const cleanup = () => {
         clearTimeout(timeout);
-        if (video.src && video.src.startsWith("blob:")) {
+        if (video.src && video.src.startsWith('blob:')) {
           URL.revokeObjectURL(video.src);
         }
       };
@@ -905,7 +905,7 @@ export class VideoConversionService {
       video.onseeked = () => {
         try {
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const thumbnail = canvas.toDataURL("image/jpeg", 0.7);
+          const thumbnail = canvas.toDataURL('image/jpeg', 0.7);
           cleanup();
           resolve(thumbnail);
         } catch (error) {
@@ -916,7 +916,7 @@ export class VideoConversionService {
 
       video.onerror = () => {
         cleanup();
-        reject(new Error("Failed to load video"));
+        reject(new Error('Failed to load video'));
       };
 
       try {
@@ -931,19 +931,19 @@ export class VideoConversionService {
 
   static getVideoThumbnail(videoFile: File): Promise<string> {
     return new Promise((resolve, reject) => {
-      const video = document.createElement("video");
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const video = document.createElement('video');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
       if (!ctx) {
-        reject(new Error("Could not get canvas context"));
+        reject(new Error('Could not get canvas context'));
         return;
       }
 
       // Set a dynamic timeout based on file size (3-10 seconds)
       const dynamicTimeout = Math.min(
         10000,
-        Math.max(3000, videoFile.size / 100000),
+        Math.max(3000, videoFile.size / 100000)
       );
       const timeout = setTimeout(() => {
         cleanup();
@@ -952,7 +952,7 @@ export class VideoConversionService {
 
       const cleanup = () => {
         clearTimeout(timeout);
-        if (video.src && video.src.startsWith("blob:")) {
+        if (video.src && video.src.startsWith('blob:')) {
           URL.revokeObjectURL(video.src);
         }
       };
@@ -967,7 +967,7 @@ export class VideoConversionService {
       video.onseeked = () => {
         try {
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const thumbnail = canvas.toDataURL("image/jpeg", 0.7);
+          const thumbnail = canvas.toDataURL('image/jpeg', 0.7);
           cleanup();
           resolve(thumbnail);
         } catch (error) {
@@ -993,23 +993,23 @@ export class VideoConversionService {
   }
 
   private static generateFallbackThumbnail(fileName: string): string {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
     if (!ctx) {
       // Return a simple data URL if canvas is not available
-      return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDY0MCAzNjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iMzYwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTYgMTgwTDM4NCAyNDBMMjU2IDMwMFYxODBaIiBmaWxsPSIjOUI5Qjk5Ii8+Cjwvc3ZnPgo=";
+      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDY0MCAzNjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iMzYwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTYgMTgwTDM4NCAyNDBMMjU2IDMwMFYxODBaIiBmaWxsPSIjOUI5Qjk5Ii8+Cjwvc3ZnPgo=';
     }
 
     canvas.width = 640;
     canvas.height = 360;
 
     // Create a simple video placeholder thumbnail
-    ctx.fillStyle = "#f3f4f6";
+    ctx.fillStyle = '#f3f4f6';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw a play button
-    ctx.fillStyle = "#6b7280";
+    ctx.fillStyle = '#6b7280';
     ctx.beginPath();
     ctx.moveTo(canvas.width / 2 - 40, canvas.height / 2 - 30);
     ctx.lineTo(canvas.width / 2 + 30, canvas.height / 2);
@@ -1018,13 +1018,13 @@ export class VideoConversionService {
     ctx.fill();
 
     // Add file name text
-    ctx.fillStyle = "#374151";
-    ctx.font = "16px system-ui, -apple-system, sans-serif";
-    ctx.textAlign = "center";
+    ctx.fillStyle = '#374151';
+    ctx.font = '16px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
     const shortName =
-      fileName.length > 50 ? fileName.substring(0, 47) + "..." : fileName;
+      fileName.length > 50 ? fileName.substring(0, 47) + '...' : fileName;
     ctx.fillText(shortName, canvas.width / 2, canvas.height - 30);
 
-    return canvas.toDataURL("image/jpeg", 0.8);
+    return canvas.toDataURL('image/jpeg', 0.8);
   }
 }

@@ -1,9 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ConversionService } from '@/services/conversionService';
-import {
-  sanitizeFilename,
-  calculateCRC32,
-} from '@/utils/zipUtils';
+import { sanitizeFilename, calculateCRC32 } from '@/utils/zipUtils';
 
 // ─── formatFileSize ───
 
@@ -96,9 +93,7 @@ describe('zipUtils.sanitizeFilename', () => {
   });
 
   it('leaves clean filenames unchanged', () => {
-    expect(sanitizeFilename('converted-file.webp')).toBe(
-      'converted-file.webp'
-    );
+    expect(sanitizeFilename('converted-file.webp')).toBe('converted-file.webp');
   });
 });
 

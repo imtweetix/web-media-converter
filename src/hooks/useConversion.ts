@@ -1,24 +1,24 @@
-import * as Sentry from "@sentry/react";
-import { useCallback, useEffect, useState } from "react";
-import { ConversionService } from "../services/conversionService";
+import * as Sentry from '@sentry/react';
+import { useCallback, useEffect, useState } from 'react';
+import { ConversionService } from '../services/conversionService';
 import {
   FFmpegLoadState,
   onFFmpegLoadProgress,
   onFFmpegStateChange,
-} from "../services/ffmpegLoader";
-import { VideoConversionService } from "../services/videoConversionService";
+} from '../services/ffmpegLoader';
+import { VideoConversionService } from '../services/videoConversionService';
 import {
   FileItem,
   ProgressCallback,
   ResizeSettings,
   VideoSettings,
-} from "../types";
-import { trackConversion, trackConversionError } from "../utils/analytics";
+} from '../types';
+import { trackConversion, trackConversionError } from '../utils/analytics';
 
 // Retry mechanism for failed conversions
 const convertWithRetry = async (
   convertFn: () => Promise<Blob>,
-  maxRetries: number = 2,
+  maxRetries: number = 2
 ): Promise<Blob> => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -26,16 +26,16 @@ const convertWithRetry = async (
     } catch (error) {
       if (attempt === maxRetries) throw error;
       // Exponential backoff
-      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       console.log(`Retry attempt ${attempt} for conversion`);
     }
   }
-  throw new Error("Max retries exceeded");
+  throw new Error('Max retries exceeded');
 };
 
 export function useConversion() {
   const [isConverting, setIsConverting] = useState<boolean>(false);
-  const [ffmpegState, setFfmpegState] = useState<FFmpegLoadState>("idle");
+  const [ffmpegState, setFfmpegState] = useState<FFmpegLoadState>('idle');
   const [ffmpegLoadProgress, setFfmpegLoadProgress] = useState<number>(0);
 
   useEffect(() => {
@@ -53,26 +53,26 @@ export function useConversion() {
       quality: number,
       globalResizeSettings: ResizeSettings,
       globalVideoSettings: VideoSettings,
-      updateFile: (id: string | number, updates: Partial<FileItem>) => void,
+      updateFile: (id: string | number, updates: Partial<FileItem>) => void
     ): Promise<void> => {
       setIsConverting(true);
 
-      const filesToConvert = files.filter((f) => f.status === "pending");
+      const filesToConvert = files.filter(f => f.status === 'pending');
 
       // Split into images and videos
-      const imageFiles = filesToConvert.filter((f) => !f.isVideo);
-      const videoFiles = filesToConvert.filter((f) => f.isVideo);
+      const imageFiles = filesToConvert.filter(f => !f.isVideo);
+      const videoFiles = filesToConvert.filter(f => f.isVideo);
 
       // Update status to converting for all pending files
-      filesToConvert.forEach((file) => {
-        updateFile(file.id, { progress: 0, status: "converting" });
+      filesToConvert.forEach(file => {
+        updateFile(file.id, { progress: 0, status: 'converting' });
       });
 
       // Helper to convert a single file
       const convertSingleFile = async (file: FileItem) => {
         try {
           const updateProgress: ProgressCallback = (progress: number) => {
-            updateFile(file.id, { progress, status: "converting" });
+            updateFile(file.id, { progress, status: 'converting' });
           };
 
           const convertFn = async () => {
@@ -85,7 +85,7 @@ export function useConversion() {
                 file,
                 effectiveVideoSettings,
                 updateProgress,
-                updateFile,
+                updateFile
               );
             } else {
               // Use image conversion with individual quality if set, otherwise global
@@ -96,7 +96,7 @@ export function useConversion() {
                 effectiveQuality,
                 globalResizeSettings,
                 updateProgress,
-                updateFile,
+                updateFile
               );
             }
           };
@@ -107,7 +107,7 @@ export function useConversion() {
             // For images, create a preview from the blob
             // For videos, the preview is generated in the conversion service
             const updates: Partial<FileItem> = {
-              status: "converted",
+              status: 'converted',
               progress: 100,
               convertedBlob,
               convertedSize: convertedBlob.size,
@@ -122,21 +122,21 @@ export function useConversion() {
 
             // Track successful conversion
             trackConversion(
-              file.isVideo ? "video" : "image",
+              file.isVideo ? 'video' : 'image',
               file.file.size,
-              convertedBlob.size,
+              convertedBlob.size
             );
           } else {
-            updateFile(file.id, { status: "error", progress: 0 });
+            updateFile(file.id, { status: 'error', progress: 0 });
           }
         } catch (error) {
           const errorMessage =
-            error instanceof Error ? error.message : "Unknown error";
-          console.error("Conversion error for file:", file.name, errorMessage);
+            error instanceof Error ? error.message : 'Unknown error';
+          console.error('Conversion error for file:', file.name, errorMessage);
 
           Sentry.captureException(error, {
             tags: {
-              category: file.isVideo ? "video-conversion" : "image-conversion",
+              category: file.isVideo ? 'video-conversion' : 'image-conversion',
             },
             extra: {
               fileName: file.name,
@@ -146,13 +146,13 @@ export function useConversion() {
           });
 
           updateFile(file.id, {
-            status: "error",
+            status: 'error',
             progress: 0,
             errorMessage: errorMessage,
           });
 
           // Track conversion error
-          trackConversionError(file.isVideo ? "video" : "image", errorMessage);
+          trackConversionError(file.isVideo ? 'video' : 'image', errorMessage);
         }
       };
 
@@ -162,7 +162,7 @@ export function useConversion() {
         const IMAGE_CONCURRENT_LIMIT = Math.min(
           deviceCapability,
           4,
-          imageFiles.length,
+          imageFiles.length
         );
 
         for (let i = 0; i < imageFiles.length; i += IMAGE_CONCURRENT_LIMIT) {
@@ -171,7 +171,7 @@ export function useConversion() {
 
           // Small delay between batches to prevent overwhelming the browser
           if (i + IMAGE_CONCURRENT_LIMIT < imageFiles.length) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 100));
           }
         }
       }
@@ -183,7 +183,7 @@ export function useConversion() {
 
       setIsConverting(false);
     },
-    [],
+    []
   );
 
   return {

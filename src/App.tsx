@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 import {
   ConversionSettings,
   FilesList,
@@ -6,11 +6,11 @@ import {
   Header,
   InfoCard,
   UploadArea,
-} from "./components/features";
-import { useConversion, useDownload, useFileManager } from "./hooks";
-import { ResizeSettings, VideoSettings } from "./types";
-import { trackPerformance } from "./utils/performanceUtils";
-import { trackSettingChange } from "./utils/analytics";
+} from './components/features';
+import { useConversion, useDownload, useFileManager } from './hooks';
+import { ResizeSettings, VideoSettings } from './types';
+import { trackPerformance } from './utils/performanceUtils';
+import { trackSettingChange } from './utils/analytics';
 
 function App() {
   const [quality, setQuality] = useState<number>(80);
@@ -22,11 +22,11 @@ function App() {
     });
   const [globalVideoSettings, setGlobalVideoSettings] = useState<VideoSettings>(
     {
-      resolution: "default",
+      resolution: 'default',
       crf: 28,
-      fps: "default",
+      fps: 'default',
       audioEnabled: true,
-    },
+    }
   );
 
   const {
@@ -46,34 +46,34 @@ function App() {
 
   const handleQualityChange = useCallback((newQuality: number) => {
     setQuality(newQuality);
-    trackSettingChange("image_quality", newQuality);
+    trackSettingChange('image_quality', newQuality);
   }, []);
 
   const handleGlobalResizeChange = useCallback(
-    (field: "maxWidth" | "maxHeight", value: number) => {
-      setGlobalResizeSettings((prev) => {
+    (field: 'maxWidth' | 'maxHeight', value: number) => {
+      setGlobalResizeSettings(prev => {
         const newSettings = { ...prev, [field]: value };
-        trackSettingChange("resize_settings", { field, value });
+        trackSettingChange('resize_settings', { field, value });
         return newSettings;
       });
     },
-    [],
+    []
   );
 
   const handleGlobalVideoChange = useCallback((newSettings: VideoSettings) => {
     setGlobalVideoSettings(newSettings);
-    trackSettingChange("video_settings", newSettings);
+    trackSettingChange('video_settings', newSettings);
   }, []);
 
   const handleConvertAll = useCallback(() => {
-    trackPerformance("convertAllFiles", () =>
+    trackPerformance('convertAllFiles', () =>
       convertAllFiles(
         files,
         quality,
         globalResizeSettings,
         globalVideoSettings,
-        updateFile,
-      ),
+        updateFile
+      )
     )();
   }, [
     convertAllFiles,
@@ -85,7 +85,7 @@ function App() {
   ]);
 
   const handleDownloadAll = useCallback(() => {
-    trackPerformance("downloadAll", () => downloadAll(files))();
+    trackPerformance('downloadAll', () => downloadAll(files))();
   }, [downloadAll, files]);
 
   const handleApplyGlobalResize = useCallback(() => {
@@ -94,7 +94,7 @@ function App() {
 
   const handleApplyGlobalImageSettings = useCallback(() => {
     // Apply both global quality and resize settings to all images
-    files.forEach((file) => {
+    files.forEach(file => {
       if (!file.isVideo) {
         updateFile(file.id, {
           quality: quality,
@@ -106,7 +106,7 @@ function App() {
 
   const handleApplyGlobalVideo = useCallback(() => {
     // Apply global video settings to all video files and reset individual settings
-    files.forEach((file) => {
+    files.forEach(file => {
       if (file.isVideo) {
         updateFileVideoSettings(file.id, {
           ...globalVideoSettings,
@@ -120,8 +120,8 @@ function App() {
   const hasFiles = useMemo(() => files.length > 0, [files.length]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-6xl mx-auto">
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4'>
+      <div className='max-w-6xl mx-auto'>
         <Header />
 
         <UploadArea onFilesSelected={addFiles} />

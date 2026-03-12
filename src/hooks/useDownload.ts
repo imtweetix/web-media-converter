@@ -1,9 +1,9 @@
-import * as Sentry from "@sentry/react";
-import { useState, useCallback } from "react";
-import { FileItem } from "../types";
-import { createZipWithBrowserAPIs, downloadBlob } from "../utils/zipUtils";
-import { ConversionService } from "../services/conversionService";
-import { trackDownload } from "../utils/analytics";
+import * as Sentry from '@sentry/react';
+import { useState, useCallback } from 'react';
+import { FileItem } from '../types';
+import { createZipWithBrowserAPIs, downloadBlob } from '../utils/zipUtils';
+import { ConversionService } from '../services/conversionService';
+import { trackDownload } from '../utils/analytics';
 
 export function useDownload() {
   const [isCreatingZip, setIsCreatingZip] = useState<boolean>(false);
@@ -12,14 +12,14 @@ export function useDownload() {
     if (!file.convertedBlob) return;
 
     // Use correct extension based on file type
-    const extension = file.isVideo ? ".webm" : ".webp";
+    const extension = file.isVideo ? '.webm' : '.webp';
     const filename = ConversionService.sanitizeFilename(
-      file.name.replace(/\.[^/.]+$/, extension),
+      file.name.replace(/\.[^/.]+$/, extension)
     );
     downloadBlob(file.convertedBlob, filename);
 
     // Track single file download
-    trackDownload("single", 1);
+    trackDownload('single', 1);
   }, []);
 
   const downloadFilesIndividually = useCallback(
@@ -30,12 +30,12 @@ export function useDownload() {
         }, index * 800);
       });
     },
-    [downloadFile],
+    [downloadFile]
   );
 
   const downloadAll = useCallback(
     async (files: FileItem[]): Promise<void> => {
-      const convertedFiles = files.filter((f) => f.convertedBlob);
+      const convertedFiles = files.filter(f => f.convertedBlob);
       if (convertedFiles.length === 0) return;
 
       if (convertedFiles.length === 1) {
@@ -48,32 +48,32 @@ export function useDownload() {
       try {
         const zipBlob = await createZipWithBrowserAPIs(convertedFiles);
         const now = new Date();
-        const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(now.getSeconds()).padStart(2, "0")}`;
+        const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
         const filename = `converted-files-${timestamp}.zip`;
         downloadBlob(zipBlob, filename);
 
         // Track batch download
-        trackDownload("batch", convertedFiles.length);
+        trackDownload('batch', convertedFiles.length);
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
+          error instanceof Error ? error.message : 'Unknown error';
         console.error(
-          "ZIP creation failed, using individual downloads:",
-          errorMessage,
+          'ZIP creation failed, using individual downloads:',
+          errorMessage
         );
         Sentry.captureException(error, {
-          tags: { category: "download" },
+          tags: { category: 'download' },
           extra: { fileCount: convertedFiles.length },
         });
         downloadFilesIndividually(convertedFiles);
 
         // Track batch download (fallback to individual)
-        trackDownload("batch", convertedFiles.length);
+        trackDownload('batch', convertedFiles.length);
       }
 
       setIsCreatingZip(false);
     },
-    [downloadFile, downloadFilesIndividually],
+    [downloadFile, downloadFilesIndividually]
   );
 
   return {

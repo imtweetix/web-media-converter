@@ -1,7 +1,7 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
-import react from "@vitejs/plugin-react";
-import { resolve } from "path";
-import { defineConfig } from "vite";
+import { sentryVitePlugin } from '@sentry/vite-plugin';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
@@ -14,18 +14,18 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": resolve(__dirname, "src"),
+      '@': resolve(__dirname, 'src'),
     },
   },
   build: {
-    target: "es2020",
+    target: 'es2020',
     sourcemap: true,
-    minify: "terser",
+    minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ["console.log", "console.info"],
+        pure_funcs: ['console.log', 'console.info'],
       },
       mangle: {
         safari10: true,
@@ -33,59 +33,59 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
+        manualChunks: id => {
           // Sentry chunk
-          if (id.includes("@sentry")) {
-            return "sentry";
+          if (id.includes('@sentry')) {
+            return 'sentry';
           }
           // React vendor chunk
-          if (id.includes("react") || id.includes("react-dom")) {
-            return "react-vendor";
+          if (id.includes('react') || id.includes('react-dom')) {
+            return 'react-vendor';
           }
           // FontAwesome chunk
-          if (id.includes("@fortawesome") || id.includes("@awesome.me")) {
-            return "fontawesome";
+          if (id.includes('@fortawesome') || id.includes('@awesome.me')) {
+            return 'fontawesome';
           }
           // FFmpeg wrapper chunk (lazy-loaded)
-          if (id.includes("@ffmpeg")) {
-            return "ffmpeg";
+          if (id.includes('@ffmpeg')) {
+            return 'ffmpeg';
           }
           // Services chunk (conversion logic)
-          if (id.includes("src/services/")) {
-            return "services";
+          if (id.includes('src/services/')) {
+            return 'services';
           }
           // Utils chunk
-          if (id.includes("src/utils/")) {
-            return "utils";
+          if (id.includes('src/utils/')) {
+            return 'utils';
           }
           // UI components chunk
-          if (id.includes("src/components/ui/")) {
-            return "ui-components";
+          if (id.includes('src/components/ui/')) {
+            return 'ui-components';
           }
           // Feature components chunk
-          if (id.includes("src/components/features/")) {
-            return "feature-components";
+          if (id.includes('src/components/features/')) {
+            return 'feature-components';
           }
         },
         // Optimize chunk names for better caching
-        chunkFileNames: (chunkInfo) => {
+        chunkFileNames: chunkInfo => {
           const facadeModuleId = chunkInfo.facadeModuleId
             ? chunkInfo.facadeModuleId
-                .split("/")
+                .split('/')
                 .pop()
-                ?.replace(".tsx", "")
-                .replace(".ts", "")
-            : "chunk";
+                ?.replace('.tsx', '')
+                .replace('.ts', '')
+            : 'chunk';
           return `assets/[name]-[hash].js`;
         },
-        entryFileNames: "assets/[name]-[hash].js",
-        assetFileNames: "assets/[name]-[hash].[ext]",
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
       // Tree shaking optimization
       treeshake: {
         moduleSideEffects: (id: string) => {
           // Sentry instrument file must run for its side effects
-          if (id.includes("instrument")) return true;
+          if (id.includes('instrument')) return true;
           return false;
         },
       },
@@ -101,7 +101,7 @@ export default defineConfig({
     open: true,
     host: true,
     headers: {
-      "Content-Security-Policy":
+      'Content-Security-Policy':
         "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://kit-pro.fontawesome.com https://ka-p.fontawesome.com; img-src 'self' blob: data: https://www.google-analytics.com; media-src 'self' blob: data:; connect-src 'self' https://kit-pro.fontawesome.com https://ka-p.fontawesome.com https://www.google-analytics.com https://analytics.google.com https://cdn.jsdelivr.net https://*.ingest.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none';",
     },
   },
@@ -111,8 +111,8 @@ export default defineConfig({
   },
   // Optimize dependency pre-bundling
   optimizeDeps: {
-    include: ["react", "react-dom", "@fortawesome/react-fontawesome"],
-    exclude: ["@awesome.me/kit-c9f4d240a1", "@ffmpeg/ffmpeg", "@ffmpeg/util"],
+    include: ['react', 'react-dom', '@fortawesome/react-fontawesome'],
+    exclude: ['@awesome.me/kit-c9f4d240a1', '@ffmpeg/ffmpeg', '@ffmpeg/util'],
   },
   // CSS optimization
   css: {

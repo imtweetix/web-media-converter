@@ -1,7 +1,7 @@
-import * as Sentry from "@sentry/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ConversionService } from "../services/conversionService";
-import { FileItem, ResizeSettings, VideoSettings } from "../types";
+import * as Sentry from '@sentry/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ConversionService } from '../services/conversionService';
+import { FileItem, ResizeSettings, VideoSettings } from '../types';
 
 export function useFileManager() {
   const [files, setFiles] = useState<FileItem[]>([]);
@@ -36,7 +36,7 @@ export function useFileManager() {
 
               return fileItem;
             } catch (error) {
-              console.warn("Error creating file item:", error);
+              console.warn('Error creating file item:', error);
               errors.push(`Failed to process file: ${file.name}`);
               return null;
             }
@@ -47,25 +47,25 @@ export function useFileManager() {
           }
 
           return null; // Fallback return
-        },
+        }
       );
 
       const results = await Promise.all(filePromises);
       const processedFiles = results.filter(
-        (file): file is FileItem => file !== null,
+        (file): file is FileItem => file !== null
       );
 
       if (!abortController.signal.aborted && processedFiles.length > 0) {
-        setFiles((prev) => [...prev, ...processedFiles]);
+        setFiles(prev => [...prev, ...processedFiles]);
       }
     } catch (error) {
       if (!abortController.signal.aborted) {
-        console.error("Error processing files:", error);
+        console.error('Error processing files:', error);
         Sentry.captureException(error, {
-          tags: { category: "file-processing" },
+          tags: { category: 'file-processing' },
           extra: {
             fileCount: newFiles.length,
-            fileNames: newFiles.map((f) => f.name),
+            fileNames: newFiles.map(f => f.name),
           },
         });
       }
@@ -75,15 +75,15 @@ export function useFileManager() {
   }, []);
 
   const removeFile = useCallback((id: string | number): void => {
-    setFiles((prev) => {
-      const fileToRemove = prev.find((f) => f.id === id);
+    setFiles(prev => {
+      const fileToRemove = prev.find(f => f.id === id);
       if (fileToRemove?.preview) {
         URL.revokeObjectURL(fileToRemove.preview);
       }
       if (fileToRemove?.convertedPreview) {
         URL.revokeObjectURL(fileToRemove.convertedPreview);
       }
-      return prev.filter((f) => f.id !== id);
+      return prev.filter(f => f.id !== id);
     });
   }, []);
 
@@ -112,8 +112,8 @@ export function useFileManager() {
 
   const updateFile = useCallback(
     (id: string | number, updates: Partial<FileItem>): void => {
-      setFiles((prev) =>
-        prev.map((f) => {
+      setFiles(prev =>
+        prev.map(f => {
           if (f.id === id) {
             // Clean up old blob URLs when updating
             if (
@@ -126,36 +126,36 @@ export function useFileManager() {
             return { ...f, ...updates };
           }
           return f;
-        }),
+        })
       );
     },
-    [],
+    []
   );
 
   const updateFileResizeSettings = useCallback(
     (fileId: string | number, resizeSettings: ResizeSettings) => {
       updateFile(fileId, { resizeSettings });
     },
-    [updateFile],
+    [updateFile]
   );
 
   const updateFileVideoSettings = useCallback(
     (fileId: string | number, videoSettings: VideoSettings) => {
       updateFile(fileId, { videoSettings });
     },
-    [updateFile],
+    [updateFile]
   );
 
   const applyGlobalResizeToAll = useCallback(
     (globalResizeSettings: ResizeSettings) => {
-      setFiles((prev) =>
-        prev.map((f) => ({
+      setFiles(prev =>
+        prev.map(f => ({
           ...f,
           resizeSettings: { ...globalResizeSettings },
-        })),
+        }))
       );
     },
-    [],
+    []
   );
 
   // Enhanced cleanup effect with memory monitoring
@@ -185,7 +185,7 @@ export function useFileManager() {
     const handleMemoryPressure = () => {
       // Force garbage collection of blob URLs when memory is low
       files.forEach((file: FileItem) => {
-        if (file.status === "converted" && file.convertedPreview) {
+        if (file.status === 'converted' && file.convertedPreview) {
           URL.revokeObjectURL(file.convertedPreview);
           file.convertedPreview = null;
         }
@@ -193,7 +193,7 @@ export function useFileManager() {
     };
 
     // Listen for memory pressure (if supported)
-    if ("memory" in performance) {
+    if ('memory' in performance) {
       const checkMemory = () => {
         const memInfo = (performance as any).memory;
         if (memInfo && memInfo.usedJSHeapSize > memInfo.jsHeapSizeLimit * 0.8) {

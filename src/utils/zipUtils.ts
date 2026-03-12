@@ -22,10 +22,7 @@ export const calculateCRC32 = (data: Uint8Array): number => {
   return (crc ^ -1) >>> 0;
 };
 
-const deduplicateFilename = (
-  name: string,
-  usedNames: Set<string>
-): string => {
+const deduplicateFilename = (name: string, usedNames: Set<string>): string => {
   if (!usedNames.has(name)) {
     usedNames.add(name);
     return name;
@@ -57,9 +54,7 @@ export const createZipWithBrowserAPIs = async (
 
     // Use correct extension based on file type
     const extension = file.isVideo ? '.webm' : '.webp';
-    const rawName = sanitizeFilename(
-      file.name.replace(/\.[^/.]+$/, extension)
-    );
+    const rawName = sanitizeFilename(file.name.replace(/\.[^/.]+$/, extension));
     const fileName = deduplicateFilename(rawName, usedNames);
     const fileNameBytes = new TextEncoder().encode(fileName);
     const fileData = new Uint8Array(await file.convertedBlob.arrayBuffer());
