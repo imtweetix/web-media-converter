@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Memory Maintenance
+
+At the end of each conversation (or when significant work is completed), review and update your memory files to capture important decisions, new patterns, version changes, or user feedback. Check existing memories for accuracy and update any that have become outdated.
+
 ## Project Overview
 
 **Web Media Converter** is a proprietary SaaS application that converts images to WebP and videos to WebM format entirely in the browser. All media processing happens client-side with no server uploads, ensuring user privacy.
