@@ -74,7 +74,7 @@
 ## 🚀 Using the Application
 
 ### For Users
-Simply visit [https://webmediaconverter.netlify.app/](https://webmediaconverter.netlify.app/) to start converting your images to WebP and videos to WebM format instantly.
+Simply visit [https://app.webmediaconverter.com/](https://app.webmediaconverter.com/) to start converting your images to WebP and videos to WebM format instantly.
 
 ### For Contributors
 This repository is open for contributions. You can:
@@ -112,21 +112,26 @@ The converter includes intelligent image resizing to help reduce file sizes whil
 
 Configure video output quality and audio options:
 
-### **Bitrate Control**
-- **Range**: 100-10000 kbps
-- **Default**: 1000 kbps (recommended for web)
-- **Higher bitrate** = better quality but larger file size
+### **CRF Quality Control**
+- **Range**: 0-63 (lower = higher quality)
+- **Default**: 28 (recommended for web)
+- **True CRF mode** via libvpx-vp9 for optimal quality-to-size ratio
+
+### **Resolution & Frame Rate**
+- **Resolution presets**: 320x240, 640x480, 720p, 1080p, 1440p, 4K, or custom
+- **FPS options**: Auto-detect (default), or choose 12, 15, 24, 25, 30, 48, 50, 60 FPS
+- **Aspect ratio**: Always preserved during scaling
 
 ### **Audio Options**
 - **Include Audio**: Toggle to include/exclude audio tracks
 - **Default**: Audio enabled
-- **Note**: Audio inclusion depends on browser support and source video
+- **Codec**: Vorbis audio encoding via libvorbis
 
 ### **How Video Conversion Works**
 1. **Upload videos** → Automatic thumbnail generation for preview
 2. **Adjust global settings** → Apply to all videos without individual overrides
-3. **Individual settings** → Customize bitrate and audio per video (future feature)
-4. **Convert** → Browser-based WebM encoding using MediaRecorder API
+3. **Per-video overrides** → Customize resolution, CRF, FPS, and audio per video
+4. **Convert** → FFmpeg.wasm (VP9) with automatic MediaRecorder fallback
 
 
 ## 📦 Development Commands (Contributors Only)
@@ -150,13 +155,14 @@ Configure video output quality and audio options:
 
 ## 🛡️ Security Features
 
-- **Content Security Policy**: Prevents XSS attacks
+- **Content Security Policy**: Prevents XSS attacks (consistent across dev, HTML meta, and production headers)
+- **Error Monitoring**: Sentry integration for structured error reporting and diagnostics (production only)
 - **File Size Validation**:
   - Images: 50MB maximum file size
   - Videos: 500MB maximum file size
 - **Dimension Limits**: 16,384px maximum width/height for input images
 - **Resize Validation**: Smart bounds checking for custom resize dimensions
-- **Input Sanitization**: Secure filename handling
+- **Input Sanitization**: Secure filename handling with ZIP deduplication
 - **Format Validation**: Strict file type checking for images and videos
 - **Client-Side Only**: No data ever leaves your browser
 
@@ -192,19 +198,25 @@ web-media-converter/
 │   │   └── index.ts        # Hooks exports
 │   ├── services/           # Business logic services
 │   │   ├── conversionService.ts # Image conversion functions
-│   │   └── videoConversionService.ts # Video conversion functions
+│   │   ├── videoConversionService.ts # Video conversion functions
+│   │   └── ffmpegLoader.ts # FFmpeg WASM singleton loader
 │   ├── utils/              # Utility functions
 │   │   ├── zipUtils.ts     # ZIP file creation
-│   │   └── analytics.ts    # Google Analytics tracking
+│   │   ├── analytics.ts    # Google Analytics tracking
+│   │   └── performanceUtils.ts # Performance monitoring
+│   ├── __tests__/          # Test suites (Vitest)
 │   ├── types.ts            # TypeScript definitions
-│   ├── App.tsx             # Main application (95 lines)
+│   ├── instrument.ts       # Sentry initialization
+│   ├── App.tsx             # Main application
 │   ├── main.tsx            # Application entry point
 │   └── index.css           # Global styles
+├── public/
+│   └── sw-ffmpeg.js        # Service worker for WASM caching
 ├── dist/                   # Production build output
 ├── netlify.toml           # Netlify configuration
 ├── package.json           # Dependencies and scripts
 ├── tsconfig.json          # TypeScript configuration
-├── tailwind.config.js     # Tailwind CSS configuration
+├── vitest.config.ts       # Test configuration
 └── vite.config.ts         # Vite configuration
 ```
 
@@ -212,8 +224,8 @@ web-media-converter/
 
 ### Core Technologies
 - **[React 19](https://reactjs.org/)** - UI framework with latest features
-- **[TypeScript 5.6](https://www.typescriptlang.org/)** - Type-safe JavaScript
-- **[Vite 6.x](https://vitejs.dev/)** - Lightning-fast build tool
+- **[TypeScript 5.9](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Vite 7.x](https://vitejs.dev/)** - Lightning-fast build tool
 
 ### Styling & UI
 - **[Tailwind CSS 3.4](https://tailwindcss.com/)** - Utility-first CSS framework
@@ -302,7 +314,7 @@ This project is licensed under a **Proprietary License** - see the [LICENSE](LIC
 **Key Points:**
 - ✅ View source code for educational purposes
 - ✅ Contribute improvements and suggestions
-- ✅ Use the official web app at [https://webmediaconverter.netlify.app/](https://webmediaconverter.netlify.app/)
+- ✅ Use the official web app at [https://app.webmediaconverter.com/](https://app.webmediaconverter.com/)
 - ❌ Deploy, host, or distribute this software
 - ❌ Use for commercial purposes without permission
 - ❌ Create derivative works
@@ -424,9 +436,11 @@ For performance analysis, use browser-based tools:
 
 For detailed release notes and version history, see the [CHANGELOG.md](https://github.com/imtweetix/web-media-converter/blob/main/CHANGELOG.md).
 
-### What's New in 2.9.0
-- **Test Infrastructure**: Vitest test suite with 51 tests covering file validation, utility functions, CRC32, and video validation
-- **Test Scripts**: `npm test` for single run, `npm run test:watch` for development
+### Recent Highlights (v2.6.1–2.9.0)
+- **Test Infrastructure** (v2.9.0): Vitest test suite with 51 tests covering file validation, utility functions, CRC32, and video validation
+- **Sentry Error Monitoring** (v2.8.0): SDK integration, React ErrorBoundary, structured error reporting with source map uploads
+- **FFmpeg.wasm Video Engine** (v2.7.0): Faster-than-real-time VP9 transcoding with true CRF quality control, service worker WASM caching, automatic MediaRecorder fallback
+- **Bug Fixes** (v2.6.1–2.6.4): CSP production fix, ZIP entry count and duplicate filename fixes, video audio muted during conversion, image conversion performance improvements
 
 ---
 
