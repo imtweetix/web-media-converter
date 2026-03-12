@@ -1,7 +1,11 @@
 import * as Sentry from '@sentry/react';
 import { fetchFile } from '@ffmpeg/util';
 import { FileItem, VideoSettings, ProgressCallback } from '../types';
-import { getFFmpeg, isFFmpegPermanentlyFailed } from './ffmpegLoader';
+import {
+  getFFmpeg,
+  isFFmpegPermanentlyFailed,
+  terminateFFmpeg,
+} from './ffmpegLoader';
 
 export class VideoConversionService {
   // Helper function to convert CRF to approximate bitrate
@@ -468,7 +472,6 @@ export class VideoConversionService {
       if (signal?.aborted) {
         // Terminate the ffmpeg instance to force-stop the worker.
         // A new instance will be lazily created on the next conversion.
-        const { terminateFFmpeg } = await import('./ffmpegLoader');
         terminateFFmpeg();
       } else {
         // Clean up virtual FS only when not aborted (deleteFile would

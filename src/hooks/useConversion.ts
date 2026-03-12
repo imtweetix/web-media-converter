@@ -26,7 +26,8 @@ const convertWithRetry = async (
     try {
       return await convertFn();
     } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      if (error instanceof DOMException && error.name === 'AbortError')
+        throw error;
       if (attempt === maxRetries) throw error;
       // Exponential backoff
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
@@ -163,10 +164,7 @@ export function useConversion() {
           }
         } catch (error) {
           // Silently skip aborted conversions
-          if (
-            error instanceof DOMException &&
-            error.name === 'AbortError'
-          ) {
+          if (error instanceof DOMException && error.name === 'AbortError') {
             return;
           }
 

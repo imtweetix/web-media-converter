@@ -63,7 +63,8 @@ function App() {
 
       // If no other files remain that are converting or pending, stop entirely
       const hasRemainingWork = files.some(
-        f => f.id !== id && (f.status === 'converting' || f.status === 'pending')
+        f =>
+          f.id !== id && (f.status === 'converting' || f.status === 'pending')
       );
       if (!hasRemainingWork) {
         cancelAllConversions();
